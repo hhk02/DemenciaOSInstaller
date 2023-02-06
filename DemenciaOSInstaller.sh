@@ -157,20 +157,15 @@ Install() {
     fi
 }
 
-if [ -f /sys/firmware/efi ]; then
-	echo "======================================================================================"
-	echo " Welcome to the Demencia OS Installer. What do you want?"
-	echo "======================================================================================"
-	echo "1.- Install"
-	echo "2.- Exit"
-	echo "> "
-	read $option
-	if [$option -eq 1]; then
-		Install
-	elif [$option -gt 2]; then
-		exit
-	fi
-else
-	echo "Your computer doesn't support UEFI"
+echo "======================================================================================"
+echo " Welcome to the Demencia OS Installer. What do you want?"
+echo "======================================================================================"
+echo "1.- Install"
+echo "2.- Exit"
+echo "> "
+read $option
+if [$option -eq 1]; then
+	Install
+elif [$option -gt 2]; then
 	exit
 fi
