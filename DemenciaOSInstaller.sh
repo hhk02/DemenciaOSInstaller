@@ -159,15 +159,18 @@ Install() {
     fi
 }
 
-echo "======================================================================================"
-echo " Welcome to the Demencia OS Installer. What do you want?"
-echo "======================================================================================"
-echo "1.- Install"
-echo "2.- Exit"
-echo "> "
-read option
-if [[ $option -eq 1 ]]; then
-	Install
-elif [[ $option -eq 2 ]]; then
-	exit
-fi
+if [ $whoami -eq "root" ]; then
+	echo "======================================================================================"
+	echo " Welcome to the Demencia OS Installer. What do you want?"
+	echo "======================================================================================"
+	echo "1.- Install"
+	echo "2.- Exit"
+	echo "> "
+	read option
+	if [[ $option -eq 1 ]]; then
+		Install
+	elif [[ $option -eq 2 ]]; then
+		exit
+	fi
+else
+	echo "You need be root to install!"
