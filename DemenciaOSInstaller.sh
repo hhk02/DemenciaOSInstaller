@@ -30,9 +30,9 @@ ChangeKeyboardLanguage() {
 # Metodo de creación de usuario
 CreateUser() {
 	echo Username: 
-    read user
+    read -p user
     echo -e "is Sudoer (yes/no)"
-    read isSudoer
+    read -p isSudoer
 
     if [[ $isSudoer -eq "yes" ]]; then
     echo Adding to sudo group...
@@ -130,15 +130,15 @@ Install() {
     if [[ $disk -eq "" ]]; then
 	    Install
     else
-	    echo -e Starting fdisk in $disk
+	    echo -e "Starting fdisk in ", $disk
 	    fdisk $disk
 	    echo "You do want use SWAP? (yes/no)"
 	    read swapoption
-	    if [[$swapoption -eq "no"]]; then
+	    if [[ $swapoption -eq "no" ]]; then
 		    usingSwap=false
-	    elif [[$swapoption -eq "yes"]]; then
+	    elif [[ $swapoption -eq "yes" ]]; then
 		    echo "Specify the swap partition: "
-		    read swappart
+		    read -p swappart
 		    echo -e "Selected partition: ", $swappart
 		    usingSwap=true
 	    fi
@@ -146,7 +146,7 @@ Install() {
 	    read rootpart
 	    if [[ $rootpart -eq "" ]]; then
 		    echo "Root partition : "
-		    read rootpart
+		    read -p rootpart
 	    else
 	    	echo "Formating partitions!"
 		    mkfs.vfat -F 32 $efipart
