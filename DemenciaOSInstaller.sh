@@ -119,7 +119,6 @@ InstallProcess() {
     umount -l /mnt
     echo "Installation complete!"
     exit
-    fi
 }
 Install() {
     clear
