@@ -144,6 +144,8 @@ Install() {
 	    fi
 	    echo "Specify the root partition ex: /dev/sda2 "
 	    read rootpart
+	    echo "Specify the EFI partition ex : /dec/sda1 "
+	    read efipart
 	    if [[ $rootpart -eq "" ]]; then
 		    echo "Root partition : "
 		    read -p rootpart
