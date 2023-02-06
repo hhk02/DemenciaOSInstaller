@@ -62,9 +62,8 @@ GetNala() {
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	arch-chroot /mnt /bin/bash -c 'apt install wget -y'
-	umount -l /mnt
 	echo "What kernel you do want (generic/xanmod)?"
-	read -p choosekernel
+	read choosekernel
     	echo -e Kernel selected: $choosekernel
 	if [[ $choosekernel -eq "" ]]; then
 		InstallKernel
