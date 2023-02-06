@@ -174,3 +174,4 @@ if [ $whoami -eq "root" ]; then
 	fi
 else
 	echo "You need be root to install!"
+fi
