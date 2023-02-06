@@ -65,7 +65,7 @@ InstallKernel() {
 	echo "What kernel you do want (generic/xanmod)?"
 	read choosekernel
     	echo -e Kernel selected: $choosekernel
-	if [[ $choosekernel -eq "" ]]; then
+	if [[ -z "$choosekernel" ]]; then
 		InstallKernel
 	elif [[ $choosekernel -eq "generic" ]]; then
 		echo "Adding non-free repos..."
@@ -104,7 +104,7 @@ InstallProcess() {
     fi
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    arch-chroot /mnt /bin/bash -c 'mount' $efipart /boot
+    arch-chroot /mnt /bin/bash -c mount $efipart /boot
     InstallKernel
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
