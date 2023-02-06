@@ -14,7 +14,6 @@ user=""
 isSudoer=""
 choosekernel=""
 usingSwap=false
-isEFI=true
 
 
 
