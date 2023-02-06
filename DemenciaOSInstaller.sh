@@ -35,12 +35,12 @@ CreateUser() {
     echo -e "is Sudoer (yes/no)"
     read isSudoer
 
-    if [$isSudoer -eq "yes"]; then
+    if [ $isSudoer -eq "yes" ]; then
     echo Adding to sudo group...
 	arch-chroot /mnt /bin/bash -c 'usermod -aG sudo', $user
 	echo -e The user $user has added to sudo group sucessfully!
     fi
-    if [$user -z ""]; then
+    if [ $user -eq "" ]; then
 	    CreateUser
     fi
     arch-chroot /mnt /bin/bash -c 'useradd -m ', $user
@@ -51,7 +51,7 @@ CreateUser() {
 GetNala() {
 	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb'
 	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb'
-	if [-f /mnt/volian-archive*.deb]; then
+	if [ -f /mnt/volian-archive*.deb ]; then
 		arch-chroot /mnt /bin/bash -c 'apt install ./volian-archive*.deb  -y'
         	arch-chroot /mnt /bin/bash -c 'apt install nala-legacy -y'
         	echo Nala installed sucessfully!
@@ -67,9 +67,9 @@ InstallKernel() {
 	echo "What kernel you do want (generic/xanmod)?"
 	read -p choosekernel
     	echo -e Kernel selected: $choosekernel
-	if [$choosekernel = ""]; then
+	if [ $choosekernel -eq "" ]; then
 		InstallKernel
-	elif [$choosekernel = "generic"]; then
+	elif [ $choosekernel -eq "generic" ]; then
 		echo "Adding non-free repos..."
 		echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
 		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
@@ -79,7 +79,7 @@ InstallKernel() {
 		arch-chroot /mnt /bin/bash -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
 		arch-chroot /mnt /bin/bash -c 'update-grub'
     	echo Generic kernel installed!
-    	elif [$choosekernel = "xanmod"]; then
+    	elif [ $choosekernel -eq "xanmod" ]; then
 		echo "Adding non-free repos..."
 		echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
 		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
@@ -104,23 +104,22 @@ InstallProcess() {
     else
 	    MakeSwap
     fi
-    if [$isEFI -eq "yes"]; then
-	    apt install arch-install-scripts -y
-	    # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-	    arch-chroot /mnt /bin/bash -c 'mount', $efipart, /boot
-	    InstallKernel
-	    GetNala
-	    arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
-	    echo Generating fstab file!
-	    genfstab -U /mnt > /mnt/etc/fstab
-	    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --removable'
-	    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS'
-	    arch-chroot /media/target /bin/bash -c 'apt remove live-boot* live-tools  -y && /usr/sbin/update-initramfs.orig.initramfs-tools -c -k all && update-grub'
-	    CreateUser
-	    ChangeKeyboardLanguage
-	    umount -l /mnt
-	    echo "Installation complete!"
-	    exit
+    apt install arch-install-scripts -y
+    # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
+    arch-chroot /mnt /bin/bash -c 'mount', $efipart, /boot
+    InstallKernel
+    GetNala
+    arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
+    echo Generating fstab file!
+    genfstab -U /mnt > /mnt/etc/fstab
+    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --removable'
+    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS'
+    arch-chroot /media/target /bin/bash -c 'apt remove live-boot* live-tools  -y && /usr/sbin/update-initramfs.orig.initramfs-tools -c -k all && update-grub'
+    CreateUser
+    ChangeKeyboardLanguage
+    umount -l /mnt
+    echo "Installation complete!"
+    exit
     fi
 }
 Install() {
@@ -155,9 +154,7 @@ Install() {
 		    mkfs.vfat -F 32 $efipart
 		    mkfs.ext4 $rootpart
 		    clear
-		    mkdir /mnt/boot
 		    mount $rootpart /mnt
-		    mount $efipart /mnt/boot
 		    echo "Mounted successfully!"
 		    Install
 	    fi
