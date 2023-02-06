@@ -151,7 +151,7 @@ Install() {
 		    read -p rootpart
 	    else
 	    	echo "Formating partitions!"
-		    bash -c 'mkfs.vfat -F 32' $efipart
+		    mkfs.vfat -F 32 $efipart
 		    mkfs.ext4 $rootpart
 		    clear
 		    mount $rootpart /mnt
