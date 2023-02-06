@@ -154,7 +154,7 @@ Install() {
 		    clear
 		    mount $rootpart /mnt
 		    echo "Mounted successfully!"
-		    Install
+		    InstallProcess
 	    fi
     fi
 }
