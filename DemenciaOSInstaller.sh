@@ -97,7 +97,7 @@ InstallProcess() {
     echo Installing ....
     unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs
     
-    if [$usingSwap -eq false]; then
+    if [ $usingSwap -eq false ]; then
 	    # Remove this file to fix a issue in the boot (/scripts/lock-block)
 	    rm /mnt/etc/initramfs-tools/conf.d/resume
     else
@@ -128,7 +128,7 @@ Install() {
     echo "Disk :"
     read disk
 
-    if [$disk -eq ""]; then
+    if [ $disk -eq "" ]; then
 	    Install
     else
 	    echo -e Starting fdisk in $disk
@@ -145,7 +145,7 @@ Install() {
 	    fi
 	    echo "Specify the root partition ex: /dev/sda2 "
 	    read rootpart
-	    if [$rootpart -eq ""]; then
+	    if [ $rootpart -eq "" ]; then
 		    echo "Root partition : "
 		    read rootpart
 	    else
