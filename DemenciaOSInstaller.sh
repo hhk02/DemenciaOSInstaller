@@ -35,15 +35,15 @@ CreateUser() {
     read -p isSudoer
 
     if [[ $isSudoer -eq "yes" ]]; then
-    echo Adding to sudo group...
-	arch-chroot /mnt /bin/bash -c 'usermod -aG sudo', $user
+    	echo Adding to sudo group...
+	arch-chroot /mnt /bin/bash -c 'usermod -aG sudo ' $user
 	echo -e The user $user has added to sudo group sucessfully!
     fi
     if [[ $user -eq "" ]]; then
 	    CreateUser
     fi
-    arch-chroot /mnt /bin/bash -c 'useradd -m ', $user
-    arch-chroot /mnt /bin/bash -c 'passwd ', $user
+    arch-chroot /mnt /bin/bash -c 'useradd -m ' $user
+    arch-chroot /mnt /bin/bash -c 'passwd ' $user
     echo User created sucessfully!
 }
 # Obtener Nala
@@ -130,7 +130,7 @@ Install() {
     if [[ $disk -eq "" ]]; then
 	    Install
     else
-	    echo -e "Starting fdisk in ", $disk
+	    echo "Starting fdisk in " $disk
 	    fdisk $disk
 	    echo "You do want use SWAP? (yes/no)"
 	    read swapoption
@@ -139,7 +139,7 @@ Install() {
 	    elif [[ $swapoption -eq "yes" ]]; then
 		    echo "Specify the swap partition: "
 		    read -p swappart
-		    echo -e "Selected partition: ", $swappart
+		    echo -e "Selected partition: " $swappart
 		    usingSwap=true
 	    fi
 	    echo "Specify the root partition ex: /dev/sda2 "
@@ -149,7 +149,7 @@ Install() {
 		    read -p rootpart
 	    else
 	    	echo "Formating partitions!"
-		    mkfs.vfat -F 32 $efipart
+		    bash -c 'mkfs.vfat -F 32' $efipart
 		    mkfs.ext4 $rootpart
 		    clear
 		    mount $rootpart /mnt
