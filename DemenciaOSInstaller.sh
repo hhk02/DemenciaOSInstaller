@@ -34,12 +34,12 @@ CreateUser() {
     echo -e "is Sudoer (yes/no)"
     read isSudoer
 
-    if [ $isSudoer -eq "yes" ]; then
+    if [[ $isSudoer -eq "yes" ]]; then
     echo Adding to sudo group...
 	arch-chroot /mnt /bin/bash -c 'usermod -aG sudo', $user
 	echo -e The user $user has added to sudo group sucessfully!
     fi
-    if [ $user -eq "" ]; then
+    if [[ $user -eq "" ]]; then
 	    CreateUser
     fi
     arch-chroot /mnt /bin/bash -c 'useradd -m ', $user
@@ -66,9 +66,9 @@ InstallKernel() {
 	echo "What kernel you do want (generic/xanmod)?"
 	read -p choosekernel
     	echo -e Kernel selected: $choosekernel
-	if [ $choosekernel -eq "" ]; then
+	if [[ $choosekernel -eq "" ]]; then
 		InstallKernel
-	elif [ $choosekernel -eq "generic" ]; then
+	elif [[ $choosekernel -eq "generic" ]]; then
 		echo "Adding non-free repos..."
 		echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
 		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
@@ -78,7 +78,7 @@ InstallKernel() {
 		arch-chroot /mnt /bin/bash -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
 		arch-chroot /mnt /bin/bash -c 'update-grub'
     	echo Generic kernel installed!
-    	elif [ $choosekernel -eq "xanmod" ]; then
+    	elif [[ $choosekernel -eq "xanmod" ]]; then
 		echo "Adding non-free repos..."
 		echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
 		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
@@ -97,7 +97,7 @@ InstallProcess() {
     echo Installing ....
     unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs
     
-    if [ $usingSwap -eq false ]; then
+    if [[ $usingSwap -eq false ]]; then
 	    # Remove this file to fix a issue in the boot (/scripts/lock-block)
 	    rm /mnt/etc/initramfs-tools/conf.d/resume
     else
@@ -127,16 +127,16 @@ Install() {
     echo "Disk :"
     read disk
 
-    if [ $disk -eq "" ]; then
+    if [[ $disk -eq "" ]]; then
 	    Install
     else
 	    echo -e Starting fdisk in $disk
 	    fdisk $disk
 	    echo "You do want use SWAP? (yes/no)"
 	    read swapoption
-	    if [$swapoption -eq "no"]; then
+	    if [[$swapoption -eq "no"]]; then
 		    usingSwap=false
-	    elif [$swapoption -eq "yes"]; then
+	    elif [[$swapoption -eq "yes"]]; then
 		    echo "Specify the swap partition: "
 		    read swappart
 		    echo -e "Selected partition: ", $swappart
@@ -144,7 +144,7 @@ Install() {
 	    fi
 	    echo "Specify the root partition ex: /dev/sda2 "
 	    read rootpart
-	    if [ $rootpart -eq "" ]; then
+	    if [[ $rootpart -eq "" ]]; then
 		    echo "Root partition : "
 		    read rootpart
 	    else
@@ -159,7 +159,7 @@ Install() {
     fi
 }
 
-if [ $whoami -eq "root" ]; then
+if [[ $EUID = 0 ]]; then
 	echo "======================================================================================"
 	echo " Welcome to the Demencia OS Installer. What do you want?"
 	echo "======================================================================================"
