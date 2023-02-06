@@ -151,7 +151,15 @@ Install() {
 		    echo "Root partition : "
 		    read rootpart
 	    else
-		    InstallProcess
+	    	echo "Formating partitions!"
+		    mkfs.vfat -F 32 $efipart
+		    mkfs.ext4 $rootpart
+		    clear
+		    mkdir /mnt/boot
+		    mount $rootpart /mnt
+		    mount $efipart /mnt/boot
+		    echo "Mounted successfully!"
+		    Install
 	    fi
     fi
 }
