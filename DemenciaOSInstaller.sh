@@ -3,7 +3,6 @@
 # Demencia OS Installer by hhk02
 
 # Variables
-option=""
 swapoption=""
 disk=""
 swapoption=""
@@ -32,9 +31,9 @@ ChangeKeyboardLanguage() {
 # Metodo de creación de usuario
 CreateUser() {
 	echo Username: 
-    read -p user
-    echo -p "is Sudoer (yes/no)"
-    read -p isSudoer
+    read user
+    echo -e "is Sudoer (yes/no)"
+    read isSudoer
 
     if [$isSudoer -eq "yes"]; then
     echo Adding to sudo group...
@@ -129,7 +128,7 @@ Install() {
     echo "Warning: make sure the specify the correct disk!"
     lsblk
     echo "Disk :"
-    read -p $disk
+    read disk
 
     if [$disk -eq ""]; then
 	    Install
@@ -137,20 +136,20 @@ Install() {
 	    echo -e Starting fdisk in $disk
 	    fdisk $disk
 	    echo "You do want use SWAP? (yes/no)"
-	    read -p $swapoption
+	    read swapoption
 	    if [$swapoption -eq "no"]; then
 		    usingSwap=false
 	    elif [$swapoption -eq "yes"]; then
 		    echo "Specify the swap partition: "
-		    read -p $swappart
+		    read swappart
 		    echo -e "Selected partition: ", $swappart
 		    usingSwap=true
 	    fi
 	    echo "Specify the root partition ex: /dev/sda2 "
-	    read -p $rootpart
+	    read rootpart
 	    if [$rootpart -eq ""]; then
 		    echo "Root partition : "
-		    read -p $rootpart
+		    read rootpart
 	    else
 		    InstallProcess
 	    fi
@@ -163,9 +162,9 @@ echo "==========================================================================
 echo "1.- Install"
 echo "2.- Exit"
 echo "> "
-read $option
-if [$option -eq 1]; then
+read option
+if [[ $option -eq 1 ]]; then
 	Install
-elif [$option -gt 2]; then
+elif [[ $option -eq 2 ]]; then
 	exit
 fi
