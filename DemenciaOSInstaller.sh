@@ -37,14 +37,14 @@ CreateUser() {
     if [[ $isSudoer -eq "yes" ]]; then
     	echo Adding to sudo group...
 	arch-chroot /mnt /bin/bash -c 'usermod -aG sudo ' $user
-	echo -e The user $user has added to sudo group sucessfully!
+	echo -e "The user $user has added to sudo group sucessfully!"
     fi
     if [[ $user -eq "" ]]; then
 	    CreateUser
     fi
     arch-chroot /mnt /bin/bash -c 'useradd -m ' $user
     arch-chroot /mnt /bin/bash -c 'passwd ' $user
-    echo User created sucessfully!
+    echo "User created sucessfully!"
 }
 # Obtener Nala
 GetNala() {
@@ -53,7 +53,7 @@ GetNala() {
 	if [ -f /mnt/volian-archive*.deb ]; then
 		arch-chroot /mnt /bin/bash -c 'apt install ./volian-archive*.deb  -y'
         	arch-chroot /mnt /bin/bash -c 'apt install nala-legacy -y'
-        	echo Nala installed sucessfully!
+        	echo "Nala installed sucessfully!"
 	else
 		GetNala
 	fi
@@ -89,7 +89,7 @@ InstallKernel() {
 		arch-chroot /mnt /bin/bash -c 'apt update'
 		arch-chroot /mnt /bin/bash -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y'
 		arch-chroot /mnt /bin/bash -c 'update-grub'
-		echo XanMod Kernel Installed!
+		echo "XanMod Kernel Installed!"
 	fi
 }
 
@@ -127,10 +127,10 @@ Install() {
     echo "Disk :"
     read disk
 
-    if [[ $disk -eq "" ]]; then
+    if [ -z "$disk" ]; then
 	    Install
     else
-	    echo "Starting fdisk in " $disk
+	    echo -e "Starting fdisk in" $disk
 	    fdisk $disk
 	    echo "You do want use SWAP? (yes/no)"
 	    read swapoption
@@ -146,7 +146,7 @@ Install() {
 	    read rootpart
 	    echo "Specify the EFI partition ex : /dec/sda1 "
 	    read efipart
-	    if [[ $rootpart -eq "" ]]; then
+	    if [ -z "$rootpart" ]; then
 		    echo "Root partition : "
 		    read -p rootpart
 	    else
