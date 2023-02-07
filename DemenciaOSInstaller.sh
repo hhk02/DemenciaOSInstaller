@@ -117,6 +117,7 @@ InstallProcess() {
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
     mount $efipart /mnt/boot
     InstallKernel
+    arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y && update-initramfs -c -k all && update-grub'
     echo "You do want NVIDIA Drivers? (yes/no)"
     read nvidiaoption
     if [ $nvidiaoption == "yes" ]; then
@@ -129,7 +130,6 @@ InstallProcess() {
     genfstab -U /mnt > /mnt/etc/fstab
     arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --removable'
     arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS'
-    arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y && update-initramfs -c -k all && update-grub'
     CreateUser
     ChangeKeyboardLanguage
     umount -l /mnt
