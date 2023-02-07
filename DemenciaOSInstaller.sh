@@ -128,7 +128,7 @@ InstallProcess() {
     echo "Generating fstab file!"
     genfstab -U /mnt > /mnt/etc/fstab
     arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --removable'
-    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS'
+    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS && update-grub && update-initramfs -c -k all'
     CreateUser
     ChangeKeyboardLanguage
     umount -l /mnt
