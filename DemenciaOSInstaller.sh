@@ -95,14 +95,14 @@ InstallProcess() {
     unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs
     
     if [[ $usingSwap = 0 ]]; then
-	    # Remove this file to fix a issue in the boot (/scripts/lock-block)
+	    # Remove this file to fix a issue in boot (/scripts/lock-block)
 	    rm /mnt/etc/initramfs-tools/conf.d/resume
     else
 	    MakeSwap
     fi
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    chroot /mnt /bin/mount $efipart /boot
+    chroot /mnt /bin/mount $efipart /mnt/boot
     InstallKernel
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
