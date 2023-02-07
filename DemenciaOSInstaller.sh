@@ -41,7 +41,9 @@ CreateUser() {
 		echo Adding to sudo group...
 		usermod -R /mnt -aG sudo $user
 		echo -e "The user $user has added to sudo group sucessfully!"
-    	fi
+    	else
+		echo "This user it's not sudoer!"
+	fi
     	if [[ $user == "" ]]; then
 		CreateUser
     	fi
