@@ -34,7 +34,7 @@ CreateUser() {
     	echo -e "is Sudoer (yes/no)"
     	read isSudoer
 	
-	useradd -R /mnt -m $user
+	useradd -R /mnt -s /bin/bash -m $user
     	passwd -R /mnt $user
 	
     	if [ $isSudoer == "yes" ]; then
