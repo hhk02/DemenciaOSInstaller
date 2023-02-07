@@ -122,6 +122,7 @@ InstallProcess() {
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
     arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y'
+    InstallKernel
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
     echo "Generating fstab file!"
