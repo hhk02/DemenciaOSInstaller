@@ -30,30 +30,30 @@ ChangeKeyboardLanguage() {
 # Metodo de creación de usuario
 CreateUser() {
 	echo Username: 
-    read -p user
-    echo -e "is Sudoer (yes/no)"
-    read -p isSudoer
+    	read user
+    	echo -e "is Sudoer (yes/no)"
+    	read isSudoer
 
-    if [ $isSudoer == "yes" ]; then
-    	echo Adding to sudo group...
-	arch-chroot /mnt /bin/bash -c 'usermod -aG sudo ' $user
-	echo -e "The user $user has added to sudo group sucessfully!"
-    fi
-    if [[ $user -eq "" ]]; then
-	    CreateUser
-    fi
-    arch-chroot /mnt /bin/bash -c 'useradd -m ' $user
-    arch-chroot /mnt /bin/bash -c 'passwd ' $user
-    echo "User created sucessfully!"
+    	if [ $isSudoer == "yes" ]; then
+		echo Adding to sudo group...
+		arch-chroot /mnt /bin/bash -c 'usermod -aG sudo ' $user
+		echo -e "The user $user has added to sudo group sucessfully!"
+    	fi
+    	if [[ $user == "" ]]; then
+		CreateUser
+    	fi
+    	arch-chroot /mnt /bin/bash -c 'useradd -m ' $user
+    	arch-chroot /mnt /bin/bash -c 'passwd ' $user
+    	echo "User created sucessfully!"
 }
 # Obtener Nala
 GetNala() {
 	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb'
 	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb'
 	if [ -f /mnt/volian-archive*.deb ]; then
-	arch-chroot /mnt /bin/bash -c 'apt install ./volian-archive*.deb  -y'
-    arch-chroot /mnt /bin/bash -c 'apt install nala-legacy -y'
-    echo "Nala installed sucessfully!"
+		arch-chroot /mnt /bin/bash -c 'apt install ./volian-archive*.deb  -y'
+    		arch-chroot /mnt /bin/bash -c 'apt install nala-legacy -y'
+    		echo "Nala installed sucessfully!"
 	else
 		GetNala
 	fi
@@ -68,6 +68,7 @@ InstallKernel() {
 
 	if [[ -z $choosekernel ]]; then
 		InstallKernel
+	fi
 	if [[ $choosekernel == "generic" ]]; then
 		echo "Adding non-free repos..."
 		echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
@@ -77,22 +78,22 @@ InstallKernel() {
 		arch-chroot /mnt /bin/bash -c 'apt update -y'
 		arch-chroot /mnt /bin/bash -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
 		arch-chroot /mnt /bin/bash -c 'update-grub'
-    	echo "Generic kernel installed!"
-    if [[ $choosekernel == "xanmod" ]]; then
-		echo "Adding non-free repos..."
-		echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
-		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
-		echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-		echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-		echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-		arch-chroot /mnt /bin/bash -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
-		arch-chroot /mnt /bin/bash -c 'apt update -y'
-		arch-chroot /mnt /bin/bash -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y'
-		arch-chroot /mnt /bin/bash -c 'update-grub'
-		echo "XanMod Kernel Installed!"
+    		echo "Generic kernel installed!"
 	fi
+    if [[ $choosekernel == "xanmod" ]]; then
+	    echo "Adding non-free repos..."
+	    echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
+	    echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
+	    echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
+	    arch-chroot /mnt /bin/bash -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
+	    arch-chroot /mnt /bin/bash -c 'apt update -y'
+	    arch-chroot /mnt /bin/bash -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y'
+	    arch-chroot /mnt /bin/bash -c 'update-grub'
+	    echo "XanMod Kernel Installed!"
+    fi
 }
-
 InstallProcess() {
     echo "Installing Demencia OS ...."
     unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs
@@ -127,7 +128,7 @@ Install() {
     echo "Disk :"
     read disk
 
-    if [ -z "$disk" ]; then
+    if [ -z $disk ]; then
 	    Install
     else
 	    echo -e "Starting fdisk in" $disk
@@ -135,23 +136,22 @@ Install() {
 	    echo "You do want use SWAP? (yes/no)"
 	    read swapoption
 	    if [[ $swapoption == "no" ]]; then
-		    usingSwap=false
-		fi
-	    if [[ $swapoption == "yes" ]]; then
+		    usingSwap=0
+	    elif [[ $swapoption == "yes" ]]; then
 		    echo "Specify the swap partition: "
 		    read swappart
 		    echo -e "Selected partition: " $swappart
-		    usingSwap=true
+		    usingSwap=1
 	    fi
 	    echo "Specify the root partition ex: /dev/sda2 "
 	    read rootpart
 	    echo "Specify the EFI partition ex : /dec/sda1 "
 	    read efipart
-	    if [ -z "$rootpart" ]; then
+	    if [ -z $rootpart ]; then
 		    echo "Root partition : "
 		    read rootpart
 	    else
-	    	echo "Formating partitions!"
+		    echo "Formating partitions!"
 		    mkfs.vfat -F 32 $efipart
 		    mkfs.ext4 $rootpart
 		    clear
@@ -170,9 +170,9 @@ if [[ $EUID = 0 ]]; then
 	echo "2.- Exit"
 	echo "> "
 	read option
-	if [[ $option -eq 1 ]]; then
+	if [[ $option = 1 ]]; then
 		Install
-	elif [[ $option -eq 2 ]]; then
+	elif [[ $option = 2 ]]; then
 		exit
 	fi
 else
