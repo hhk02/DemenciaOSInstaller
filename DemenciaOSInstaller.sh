@@ -120,7 +120,7 @@ InstallProcess() {
     fi
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    mount $efipart /mnt/boot
+    arch-chroot /mnt /bin/bash -c 'mount $efipart /boot'
     InstallKernel
     arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y && update-initramfs -c -k all && update-grub'
     GetNala
