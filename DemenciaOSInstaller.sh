@@ -171,7 +171,7 @@ Install() {
 		    mkfs.ext4 $rootpart
 		    clear
 		    mount $rootpart /mnt
-		    if [ -d !/mnt/boot ]; then
+		    if [ ! -d /mnt/boot ]; then
 		    	mkdir /mnt/boot
 		    fi
 		    mount $efipart /mnt/boot
