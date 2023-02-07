@@ -70,7 +70,6 @@ GetNala() {
 
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
-	arch-chroot /mnt /bin/mount $efipart /boot
 	##cp -rv /boot/* /mnt/boot
 	arch-chroot /mnt /bin/bash -c 'apt install wget -y'
 	echo "What kernel you do want (generic/xanmod)? WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards"
@@ -122,14 +121,15 @@ InstallProcess() {
     fi
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    InstallKernel
-    arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y && update-initramfs -c -k all && update-grub'
+    arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y'
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
     echo "Generating fstab file!"
     genfstab -U /mnt > /mnt/etc/fstab
     arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --removable'
-    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS && update-grub && update-initramfs -c -k all'
+    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS'
+    arch-chroot /mnt /sbin/update-grub
+    arch-chroot /mnt /sbin/update-initramfs -c -k all
     CreateUser
     ChangeKeyboardLanguage
     umount -l /mnt
@@ -171,6 +171,10 @@ Install() {
 		    mkfs.ext4 $rootpart
 		    clear
 		    mount $rootpart /mnt
+		    if [ -f !/mnt/boot ]; then
+		    	mkdir /mnt/boot
+		    fi
+		    mount $efipart /mnt/boot
 		    echo "Mounted successfully!"
 		    InstallProcess
 	    fi
