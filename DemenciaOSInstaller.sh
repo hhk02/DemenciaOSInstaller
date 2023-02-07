@@ -86,6 +86,11 @@ InstallKernel() {
 		echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 		arch-chroot /mnt /bin/bash -c 'apt update -y'
 		arch-chroot /mnt /bin/bash -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
+		echo "You do want NVIDIA Drivers? (yes/no)"
+    		read nvidiaoption
+    		if [ $nvidiaoption == "yes" ]; then
+	    		InstallNVIDIA
+    		fi
 		arch-chroot /mnt /bin/bash -c 'update-grub'
     		echo "Generic kernel installed!"
 	fi
@@ -118,12 +123,6 @@ InstallProcess() {
     mount $efipart /mnt/boot
     InstallKernel
     arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y && update-initramfs -c -k all && update-grub'
-    echo "You do want NVIDIA Drivers? (yes/no)"
-    read nvidiaoption
-    if [ $nvidiaoption == "yes" ]; then
-	    InstallNVIDIA
-    fi
-
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
     echo "Generating fstab file!"
