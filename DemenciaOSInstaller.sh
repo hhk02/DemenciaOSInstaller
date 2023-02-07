@@ -70,7 +70,8 @@ GetNala() {
 
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
-	cp -rv /boot/* /mnt/boot
+	arch-chroot /mnt /bin/mount $efipart /boot
+	##cp -rv /boot/* /mnt/boot
 	arch-chroot /mnt /bin/bash -c 'apt install wget -y'
 	echo "What kernel you do want (generic/xanmod)? WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards"
 	read choosekernel
