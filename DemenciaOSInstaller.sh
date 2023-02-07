@@ -72,7 +72,8 @@ GetNala() {
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
 	arch-chroot /mnt /bin/bash -c 'apt install wget -y'
-	echo "What kernel you do want (generic/xanmod)? WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards"
+	echo "WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards"
+	echo "What kernel you do want (generic/xanmod/xanmod-lts) ?"
 	read choosekernel
 	echo -e "Kernel selected:" $choosekernel
 
@@ -87,11 +88,6 @@ InstallKernel() {
 		echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 		arch-chroot /mnt /bin/bash -c 'apt update -y'
 		arch-chroot /mnt /bin/bash -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
-		echo "You do want NVIDIA Drivers? (yes/no)"
-    		read nvidiaoption
-    		if [ $nvidiaoption == "yes" ]; then
-	    		InstallNVIDIA
-    		fi
 		arch-chroot /mnt /bin/bash -c 'update-grub'
     		echo "Generic kernel installed!"
 	fi
@@ -108,6 +104,19 @@ InstallKernel() {
 	    arch-chroot /mnt /bin/bash -c 'update-grub'
 	    echo "XanMod Kernel Installed!"
     fi
+    if [[ $choosekernel == "xanmod-lts" ]]; then
+	    echo "Adding non-free repos..."
+	    echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
+	    echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
+	    echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
+	    arch-chroot /mnt /bin/bash -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
+	    arch-chroot /mnt /bin/bash -c 'apt update -y'
+	    arch-chroot /mnt /bin/bash -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y'
+	    arch-chroot /mnt /bin/bash -c 'update-grub'
+	    echo "XanMod LTS Kernel Installed!"
+    fi
 }
 InstallProcess() {
     echo "Installing Demencia OS ...."
@@ -123,6 +132,11 @@ InstallProcess() {
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
     arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y'
     InstallKernel
+    echo "You do want NVIDIA Drivers? (yes/no)"
+    read nvidiaoption
+    if [ $nvidiaoption == "yes" ]; then
+    	InstallNVIDIA
+    fi
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
     echo "Generating fstab file!"
