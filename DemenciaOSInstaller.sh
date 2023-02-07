@@ -36,7 +36,7 @@ CreateUser() {
 
     	if [ $isSudoer == "yes" ]; then
 		echo Adding to sudo group...
-		arch-chroot /mnt /bin/bash -c usermod -aG sudo $user
+		usermod -R /mnt -aG sudo $user
 		echo -e "The user $user has added to sudo group sucessfully!"
     	fi
     	if [[ $user == "" ]]; then
