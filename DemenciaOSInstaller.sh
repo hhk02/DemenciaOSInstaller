@@ -160,7 +160,7 @@ Install() {
 	    fi
 	    echo "Specify the root partition ex: /dev/sda2 "
 	    read rootpart
-	    echo "Specify the EFI partition ex : /dec/sda1 "
+	    echo "Specify the EFI partition ex : /dev/sda1 "
 	    read efipart
 	    if [ -z $rootpart ]; then
 		    echo "Root partition : "
