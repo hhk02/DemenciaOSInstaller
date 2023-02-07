@@ -15,7 +15,16 @@ isSudoer=""
 choosekernel=""
 usingSwap=0
 
-
+InstallNVIDIA() {
+	echo "Adding NVIDIA repo...."
+	arch-chroot /mnt /bin/bash -c 'wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb'
+	arch-chroot /mnt /bin/bash -c 'dpkg -i cuda-keyring_1.0-1_all.deb'
+	arch-chroot /mnt /bin/bash -c 'apt update'
+	clear
+	echo "Installing NVIDIA"
+	arch-chroot /mnt /bin/bash -c 'apt install nvidia-driver switcheroo-control -y'
+	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...."
+}
 
 MakeSwap() {
     mkswap $swappart
@@ -108,6 +117,12 @@ InstallProcess() {
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
     mount $efipart /mnt/boot
     InstallKernel
+    echo "You do want NVIDIA Drivers?"
+    read nvidiaoption
+    if [ $nvidiaoption == "yes" ]; then
+	    InstallNVIDIA
+    fi
+
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
     echo "Generating fstab file!"
