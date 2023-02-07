@@ -33,7 +33,10 @@ CreateUser() {
     	read user
     	echo -e "is Sudoer (yes/no)"
     	read isSudoer
-
+	
+	useradd -R /mnt -m $user
+    	passwd -R /mnt $user
+	
     	if [ $isSudoer == "yes" ]; then
 		echo Adding to sudo group...
 		usermod -R /mnt -aG sudo $user
@@ -42,8 +45,7 @@ CreateUser() {
     	if [[ $user == "" ]]; then
 		CreateUser
     	fi
-    	useradd -R /mnt -m $user
-    	passwd -R /mnt $user
+    	
     	echo "User created sucessfully!"
 }
 # Obtener Nala
@@ -102,7 +104,7 @@ InstallProcess() {
     fi
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    chroot /mnt /bin/mount $efipart /mnt/boot
+    mount $efipart /mnt/boot
     InstallKernel
     GetNala
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
