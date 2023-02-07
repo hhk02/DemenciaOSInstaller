@@ -117,7 +117,7 @@ InstallProcess() {
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
     mount $efipart /mnt/boot
     InstallKernel
-    echo "You do want NVIDIA Drivers?"
+    echo "You do want NVIDIA Drivers? (yes/no)"
     read nvidiaoption
     if [ $nvidiaoption == "yes" ]; then
 	    InstallNVIDIA
