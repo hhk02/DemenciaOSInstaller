@@ -70,6 +70,7 @@ GetNala() {
 
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
+	arch-chroot /mnt /bin/bash -c 'mount ', $efipart , '/boot'
 	arch-chroot /mnt /bin/bash -c 'apt install wget -y'
 	echo "What kernel you do want (generic/xanmod)? WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards"
 	read choosekernel
@@ -120,7 +121,6 @@ InstallProcess() {
     fi
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    arch-chroot /mnt /bin/bash -c 'mount $efipart /boot'
     InstallKernel
     arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y && update-initramfs -c -k all && update-grub'
     GetNala
