@@ -9,12 +9,11 @@ To avoid some kind of incompatibility with the other script based on Ubuntu.
 
 # How to use?
 
-``g++ DemenciaOSInstaller.cpp -o DemenciaOSInstaller`` Thanks to Edgar and for the Makefile
+``chmod +x DemenciaOSInstaller.sh``
 
 
 
-
-`` sudo ./DemenciaOSInstaller ``
+`` sudo ./DemenciaOSInstaller.sh ``
 
 Original idea:
 hhk02
