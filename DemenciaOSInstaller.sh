@@ -15,6 +15,14 @@ isSudoer=""
 choosekernel=""
 usingSwap=0
 
+InstallWezTerm() {
+	echo "Adding WezTerm repo"
+	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
+	echo "Installing WezTerm.. request by: aydropunk"
+	arch-chroot /mnt /bin/bash -c 'apt install -y ./wezterm-20221119-145034-49b9839f.Debian11.deb'
+	echo "WezTerm Installed"
+}
+
 InstallNVIDIA() {
 	echo "Adding NVIDIA repo...."
 	arch-chroot /mnt /bin/bash -c 'wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb'
@@ -138,6 +146,7 @@ InstallProcess() {
     	InstallNVIDIA
     fi
     GetNala
+	InstallWezTerm
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
     echo "Generating fstab file!"
     genfstab -U /mnt > /mnt/etc/fstab
