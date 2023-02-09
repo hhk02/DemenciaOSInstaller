@@ -318,6 +318,7 @@ Install() {
 					--width=250 \
 					--text="The partitions has been make filesystem sucessfully" \
 					InstallProcess
+		fi
 	fi
 }
 
