@@ -374,5 +374,5 @@ if [[ $EUID = 0 ]]; then
 		exit
 	fi
 else
-	pkexec $PWD/DemenciaOSInstallerGUI.sh
+	pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY $PWD/DemenciaOSInstallerGUI.sh
 fi
