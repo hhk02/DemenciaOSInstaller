@@ -47,6 +47,11 @@ InstallNVIDIA() {
 		--title="Installing NVIDIA" \
   		--text="Installing" \
   		--percentage=0
+
+		zenity --info \
+       --title="Demencia OS Installer" \
+       --width=250 \
+       --text="NVIDIA Drivers installed!"
 }
 
 MakeSwap() {
@@ -246,9 +251,21 @@ InstallProcess() {
     arch-chroot /mnt /bin/apt remove live-boot* live-tools -y
     InstallKernel
     echo "You do want NVIDIA Drivers? (yes/no)"
-    read nvidiaoption
-    if [ $nvidiaoption == "yes" ]; then
+    nvidiaoption=$(zenity --question \
+       --title="Demencia OS Installer" \
+       --width=250 \
+	   --ok-label="Install" \
+	   --cancel-label="Quit" \
+       --text="You do want NVIDIA Drivers? (yes/no)" \
+	   )
+	   nvidiaask=$?
+    if [[ $nvidiaoption -eq 0 ]]; then
     	InstallNVIDIA
+	else
+		zenity --info \
+       --title="Demencia OS Installer" \
+       --width=250 \
+       --text="NVIDIA Drivers not needed." 
     fi
     GetNala
     InstallWezTerm
