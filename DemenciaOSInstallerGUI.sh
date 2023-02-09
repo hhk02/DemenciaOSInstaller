@@ -113,6 +113,7 @@ CreateUser() {
     				else
 					echo "This user it's not sudoer!"
 				fi
+			fi
 				zenity --info \
 					title="User creation" \
 					width=255 \
