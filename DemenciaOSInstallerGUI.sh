@@ -114,7 +114,7 @@ CreateUser() {
 				fi
 				if [[ $user == "" ]]; then
 					CreateUser
-    				fi
+    			fi
 				zenity --info \
 					title="User creation" \
 					width=255 \
@@ -183,7 +183,7 @@ InstallKernel() {
 				--no-cancel \
 				--auto-close \
 				--title="Installing generic kernel.." \
-  				--text="Installing...."
+  				--text="Installing...." \
   				--percentage=0
 
 	fi
@@ -204,7 +204,7 @@ InstallKernel() {
 				--no-cancel \
 				--auto-close \
 				--title="Installing XanMod kernel.." \
-  				--text="Installing...."
+  				--text="Installing...." \
   				--percentage=0
     fi
     if [[ $choosekernel == "xanmod-lts" ]]; then
@@ -224,7 +224,7 @@ InstallKernel() {
 				--no-cancel \
 				--auto-close \
 				--title="Installing XanMod LTS kernel.." \
-  				--text="Installing...."
+  				--text="Installing...." \
   				--percentage=0
     fi
 }
