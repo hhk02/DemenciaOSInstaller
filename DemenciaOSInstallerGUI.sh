@@ -187,11 +187,12 @@ InstallKernel() {
     fi
 }
 InstallProcess() {
-    zenity --progress \
-  		--title="Installing Demencia OS" \
+	unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs |
+		zenity --progress \
+		--title="Installing Demencia OS" \
   		--text="Formating partitions...." \
-  		--percentage=0 |
-    
+  		--percentage=0
+
     if [[ $usingSwap = 0 ]]; then
 	    # Remove this file to fix a issue in boot (/scripts/lock-block)
 	    rm /mnt/etc/initramfs-tools/conf.d/resume
@@ -208,7 +209,7 @@ InstallProcess() {
     	InstallNVIDIA
     fi
     GetNala
-	InstallWezTerm
+    InstallWezTerm
     arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
     echo "Generating fstab file!"
     genfstab -U /mnt > /mnt/etc/fstab
@@ -298,31 +299,44 @@ Install() {
 	--text="Insert the root partition ex /dev/sda2")
 	rootask=$?
 
+
 	if [ $rootask -eq 0 ]; then
 		if [ -z $rootpart ]; then
 			exit
 		else
-			mkfs.vfat -F 32 $efipart sleep 1
-			mkfs.ext4 $rootpart sleep 1
-			mount $rootpart /mnt sleep 1
-			if [ ! -d /mnt/boot ]; then
-				mkdir /mnt/boot sleep 1
-			fi
-			mount $efipart /mnt/boot |
-				zenity --progress \
+			efipart=$(zenity --entry \
+				--title="Write the EFI PARITITON" \
+				--width=250 \
+				--ok-label="OK" \
+				--cancel-label="Exit" \
+				--text="Insert EFI PARTITION EX /dev/sda1")
+			efioption=$?
+			if [ $efioption -eq 0 ]; then
+				mkfs.vfat -F 32 $efipart 
+				sleep 1
+				mkfs.ext4 $rootpart 
+				sleep 1
+				mount $rootpart /mnt 
+				sleep 1
+				if [ ! -d /mnt/boot ]; then
+					mkdir /mnt/boot 
+				fi
+				mount $efipart /mnt/boot |
+					zenity --progress \
 					--title="Making partitions" \
   					--text="Making partitions" \
   					--percentage=0
+
 				zenity --info \
 					--title="Sucessfull!" \
 					--width=250 \
-					--text="The partitions has been make filesystem sucessfully" \
-					InstallProcess
+					--text="The partitions has been make filesystem sucessfully"
+			fi
+
+			InstallProcess
 		fi
 	fi
 }
-
-
 if [[ $EUID = 0 ]]; then
 	if [ ! -f /usr/bin/zenity ]; then
 		apt install zenity -y
