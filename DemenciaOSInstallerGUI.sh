@@ -16,7 +16,6 @@ choosekernel=""
 usingSwap=0
 
 InstallWezTerm() {
-	(
 	echo "Adding WezTerm repo"
 	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "Installing WezTerm.. request by: aydropunk"
