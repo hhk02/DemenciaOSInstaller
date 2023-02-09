@@ -21,8 +21,7 @@ InstallWezTerm() {
 	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "Installing WezTerm.. request by: aydropunk"
 	arch-chroot /mnt /bin/apt install ./wezterm-20221119-145034-49b9839f.Debian11.deb
-	echo "WezTerm Installed"
-	) |
+	echo "WezTerm Installed" |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
 	
 }
