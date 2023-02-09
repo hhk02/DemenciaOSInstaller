@@ -82,35 +82,36 @@ CreateUser() {
 		--ok-label="OK" \
 		--cancel-label="Exit" \
 		--text="Insert your username")
-	useransw=$?
-		if [ -z $user ]; then
-			CreateUser
-		else
-			isSudoer=$(zenity --question \
-				--title="Sudoer" \
-				--width=250 \
-				--ok-label="Yes" \
-				--cancel-label="No" \
-				--text="It's sudoer?")
-			sudoask=$?
-			if [$sudoask -eq 0]; then
-				echo Adding to sudo group...
-				usermod -R /mnt -aG sudo $user
+			useransw=$?
+			if [ -z $user ]; then
+				CreateUser
+			else
+				isSudoer=$(zenity --question \
+					--title="Sudoer" \
+					--width=250 \
+					--ok-label="Yes" \
+					--cancel-label="No" \
+					--text="It's sudoer?")
+				sudoask=$?
+				if [$sudoask -eq 0]; then
+					echo "Adding to sudo group..."
+					usermod -R /mnt -aG sudo $user
 		
-		useradd -R /mnt -s /bin/bash -m $user
-    	chgpasswd -R /mnt $user
+					useradd -R /mnt -s /bin/bash -m $user
+    					chgpasswd -R /mnt $user
 		
-		echo -e "The user $user has added to sudo group sucessfully!"
-    	else
-		echo "This user it's not sudoer!"
-		fi
-    	if [[ $user == "" ]]; then
-		CreateUser
-    	fi
-		zenity --info \
-			title="User creation" \
-			width=255 \
-			text="User created sucessfully!"
+					echo -e "The user $user has added to sudo group sucessfully!"
+    				else
+					echo "This user it's not sudoer!"
+				fi
+				if [[ $user == "" ]]; then
+					CreateUser
+    				fi
+				zenity --info \
+					title="User creation" \
+					width=255 \
+					text="User created sucessfully!"
+			fi
 }
 # Obtener Nala
 GetNala() {
@@ -301,34 +302,27 @@ Install() {
 	--text="Insert the root partition ex /dev/sda2")
 	rootask=$?
 
-	if [$rootask -equ 0]
-	then
+	if [$rootask -equ 0]; then
 		if [ -z $rootpart ]; then
 			exit
 		else
-			mkfs.vfat -F 32 $efipart
-			sleep 1
-			mkfs.ext4 $rootpart
-			sleep 1
-			mount $rootpart /mnt
-			sleep 1
+			mkfs.vfat -F 32 $efipart sleep 1
+			mkfs.ext4 $rootpart sleep 1
+			mount $rootpart /mnt sleep 1
 			if [ ! -d /mnt/boot ]; then
-		    	mkdir /mnt/boot
+				mkdir /mnt/boot sleep 1
 			fi
-			sleep 1
 			mount $efipart /mnt/boot |
-			zenity --progress \
-				--title="Making partitions" \
-  				--text="Making partitions" \
-  				--percentage=0
-			zenity --info \
-				--title="Sucessfull!" \
-				--width=250 \
-				--text="The partitions has been make filesystem sucessfully" \
-			
-			InstallProcess
-	else
-		Install
+				zenity --progress \
+					--title="Making partitions" \
+  					--text="Making partitions" \
+  					--percentage=0
+				zenity --info \
+					--title="Sucessfull!" \
+					--width=250 \
+					--text="The partitions has been make filesystem sucessfully" \
+					InstallProcess
+		fi
 	fi
 }
 
