@@ -44,11 +44,10 @@ InstallNVIDIA() {
 	sleep 1
 	arch-chroot /mnt /bin/bash -c 'apt install nvidia-driver switcheroo-control -y'
 	sleep 1
-	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...."
-
-	)
-	zenity --progress \
-  		--title="Installing NVIDIA" \
+	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...." 
+	) |
+		zenity --progress \
+		--title="Installing NVIDIA" \
   		--text="Installing" \
   		--percentage=0
 }
@@ -93,7 +92,7 @@ CreateUser() {
 					--cancel-label="No" \
 					--text="It's sudoer?")
 				sudoask=$?
-				if [$sudoask -eq 0]; then
+				if [[ $sudoask -eq 0 ]]; then
 					echo "Adding to sudo group..."
 					usermod -R /mnt -aG sudo $user
 		
@@ -187,10 +186,12 @@ InstallKernel() {
     fi
 }
 InstallProcess() {
-	unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs |
+	(
+	unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs 
+	) |
 		zenity --progress \
 		--title="Installing Demencia OS" \
-  		--text="Formating partitions...." \
+  		--text="Installing...." \
   		--percentage=0
 
     if [[ $usingSwap = 0 ]]; then
