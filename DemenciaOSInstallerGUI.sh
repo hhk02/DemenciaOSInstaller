@@ -20,7 +20,7 @@ InstallWezTerm() {
 	echo "Adding WezTerm repo"
 	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "Installing WezTerm.. request by: aydropunk"
-	arch-chroot /mnt /bin/apt install -y ./wezterm-20221119-145034-49b9839f.Debian11.deb
+	arch-chroot /mnt /bin/dpkg -i ./wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "WezTerm Installed"
 	) |
 		zenity --progress \
@@ -122,7 +122,7 @@ GetNala() {
 	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb 
 	sleep 1
 	echo "70"
-	arch-chroot /mnt /bin/apt install ./volian-archive*.deb  -y
+	arch-chroot /mnt /bin/dpkg -i ./volian-archive*.deb  -y
 	sleep 1
     arch-chroot /mnt /bin/apt update && apt install nala-legacy -y
     sleep 1
