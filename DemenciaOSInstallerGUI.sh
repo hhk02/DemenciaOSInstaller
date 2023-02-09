@@ -113,18 +113,16 @@ CreateUser() {
     				else
 					echo "This user it's not sudoer!"
 				fi
-			fi
 				zenity --info \
 					title="User creation" \
 					width=255 \
 					text="User created sucessfully!"
-			fi
-			if [ -z $user ]; then
-				CreateUser
-			fi
 				if [[ $user == "" ]]; then
 					CreateUser
     			fi
+				if [ -z $user ]; then
+					CreateUser
+				fi
 			fi
 }
 # Obtener Nala
