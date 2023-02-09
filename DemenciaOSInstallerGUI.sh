@@ -23,7 +23,10 @@ InstallWezTerm() {
 	arch-chroot /mnt /bin/apt install ./wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "WezTerm Installed" |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
-	
+		zenity --info \
+       --title="Demencia OS Installer" \
+       --width=250 \
+       --text="The terminal WezTerm has been installed!"
 }
 
 InstallNVIDIA() {
@@ -92,10 +95,8 @@ CreateUser() {
 		--ok-label="OK" \
 		--cancel-label="Exit" \
 		--text="Password: ")
-			useransw=$?
-			if [ -z $user ]; then
-				CreateUser
-			else
+		useransw=$?
+			if [[ $useransw -eq 0 ]]; then
 				useradd -R /mnt -s /bin/bash -m $user
     			echo $user:$password | chpasswd
 				isSudoer=$(zenity --question \
@@ -112,13 +113,17 @@ CreateUser() {
     				else
 					echo "This user it's not sudoer!"
 				fi
-				if [[ $user == "" ]]; then
-					CreateUser
-    			fi
 				zenity --info \
 					title="User creation" \
 					width=255 \
 					text="User created sucessfully!"
+			fi
+			if [ -z $user ]; then
+				CreateUser
+			fi
+				if [[ $user == "" ]]; then
+					CreateUser
+    			fi
 			fi
 }
 # Obtener Nala
@@ -133,9 +138,9 @@ GetNala() {
 	arch-chroot /mnt /bin/apt install ./volian-archive-keyring_0.1.0_all.deb
 	arch-chroot /mnt /bin/apt install ./volian-archive-nala_0.1.0_all.deb
 	sleep 1
-    	arch-chroot /mnt /bin/apt update
+    arch-chroot /mnt /bin/apt update
 	arch-chroot /mnt /bin/apt install nala-legacy -y
-    	sleep 1
+    sleep 1
 	echo "100" |
 	zenity --progress \
 		--pulsate \
@@ -177,7 +182,7 @@ InstallKernel() {
 		arch-chroot /mnt /bin/apt update -y
 		arch-chroot /mnt /bin/apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y
 		arch-chroot /mnt /sbin/update-grub
-    		echo "Generic kernel installed!" |
+    	echo "Generic kernel installed!" |
 				zenity --progress \
 				--pulsate \
 				--no-cancel \
