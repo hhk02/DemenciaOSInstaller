@@ -27,7 +27,6 @@ InstallWezTerm() {
 }
 
 InstallNVIDIA() {
-	(
 	echo "Adding NVIDIA repo...."
 	arch-chroot /mnt /usr/bin/wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
 	sleep 1
@@ -40,8 +39,7 @@ InstallNVIDIA() {
 	sleep 1
 	arch-chroot /mnt /bin/apt install nvidia-driver switcheroo-control -y
 	sleep 1
-	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...." 
-	) |
+	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...."  |
 		zenity --progress \
 		--pulsate \
 		--no-cancel \
@@ -57,6 +55,9 @@ MakeSwap() {
     		swapon $swappart
 	) |
 		zenity --progress \
+			--pulsate \
+			--no-cancel \
+			--auto-close \
   			--title="Make SWAP" \
   			--text="Creating swap...." \
   			--percentage=0 
@@ -149,9 +150,14 @@ GetNala() {
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
 	arch-chroot /mnt /bin/apt install wget -y
-	echo "WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards"
-	echo "What kernel you do want (generic/xanmod/xanmod-lts) ?"
-	read choosekernel
+	choosekernel=$(zenity --entry \
+		--title="Write your username" \
+		--width=250 \
+		--ok-label="OK" \
+		--cancel-label="Exit" \
+		--text="WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards, What kernel you do want (generic/xanmod/xanmod-lts) ?"
+		)
+		kernelask=$?
 	echo -e "Kernel selected:" $choosekernel
 
 	if [[ -z $choosekernel ]]; then
@@ -166,7 +172,15 @@ InstallKernel() {
 		arch-chroot /mnt /bin/apt update -y
 		arch-chroot /mnt /bin/apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y
 		arch-chroot /mnt /sbin/update-grub
-    		echo "Generic kernel installed!"
+    		echo "Generic kernel installed!" |
+				zenity --progress \
+				--pulsate \
+				--no-cancel \
+				--auto-close \
+				--title="Installing generic kernel.." \
+  				--text="Installing...."
+  				--percentage=0
+
 	fi
     if [[ $choosekernel == "xanmod" ]]; then
 	    echo "Adding non-free repos..."
@@ -179,7 +193,14 @@ InstallKernel() {
 	    arch-chroot /mnt /bin/apt update -y
 	    arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y
 	    arch-chroot /mnt /sbin/update-grub
-	    echo "XanMod Kernel Installed!"
+	    echo "XanMod Kernel Installed!" |
+				zenity --progress \
+				--pulsate \
+				--no-cancel \
+				--auto-close \
+				--title="Installing XanMod kernel.." \
+  				--text="Installing...."
+  				--percentage=0
     fi
     if [[ $choosekernel == "xanmod-lts" ]]; then
 	    echo "Adding non-free repos..."
@@ -192,7 +213,14 @@ InstallKernel() {
 	    arch-chroot /mnt /bin/apt update -y
 	    arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y
 	    arch-chroot /mnt /sbin/update-grub
-	    echo "XanMod LTS Kernel Installed!"
+	    echo "XanMod LTS Kernel Installed!" |
+				zenity --progress \
+				--pulsate \
+				--no-cancel \
+				--auto-close \
+				--title="Installing XanMod LTS kernel.." \
+  				--text="Installing...."
+  				--percentage=0
     fi
 }
 InstallProcess() {
