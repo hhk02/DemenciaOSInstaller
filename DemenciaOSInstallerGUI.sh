@@ -18,9 +18,9 @@ usingSwap=0
 InstallWezTerm() {
 	(
 	echo "Adding WezTerm repo"
-	curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
+	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "Installing WezTerm.. request by: aydropunk"
-	dpkg --root /mnt -i wezterm-20221119-145034-49b9839f.Debian11.deb
+	arch-chroot /mnt /bin/apt install ./wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "WezTerm Installed"
 	) |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
@@ -30,16 +30,16 @@ InstallWezTerm() {
 InstallNVIDIA() {
 	(
 	echo "Adding NVIDIA repo...."
-	wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
+	arch-chroot /mnt /usr/bin/wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
 	sleep 1
-	dpkg --root /mnt -i cuda-keyring_1.0-1_all.deb
+	arch-chroot /mnt /bin/apt install ./cuda-keyring_1.0-1_all.deb
 	sleep 1
-	arch-chroot /mnt /bin/bash -c 'apt update'
+	arch-chroot /mnt /bin/apt update
 	sleep 1
 	clear
 	echo "Installing NVIDIA"
 	sleep 1
-	arch-chroot /mnt /bin/bash -c 'apt install nvidia-driver switcheroo-control -y'
+	arch-chroot /mnt /bin/apt install nvidia-driver switcheroo-control -y
 	sleep 1
 	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...." 
 	) |
@@ -85,6 +85,8 @@ CreateUser() {
 			if [ -z $user ]; then
 				CreateUser
 			else
+				useradd -R /mnt -s /bin/bash -m $user
+    				passwd -R /mnt $user
 				isSudoer=$(zenity --question \
 					--title="Sudoer" \
 					--width=250 \
@@ -102,8 +104,6 @@ CreateUser() {
 				if [[ $user == "" ]]; then
 					CreateUser
     				fi
-				useradd -R /mnt -s /bin/bash -m $user
-    				passwd -R /mnt $user
 				zenity --info \
 					title="User creation" \
 					width=255 \
@@ -112,21 +112,20 @@ CreateUser() {
 }
 # Obtener Nala
 GetNala() {
-	(
 	echo "50"
-	curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb 
+	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb 
 	sleep 1
 	echo "60"
-	curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb 
+	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb 
 	sleep 1
 	echo "70"
-	dpkg --root /mnt -i volian-archive-keyring_0.1.0_all.deb
-	dpkg --root /mnt -i volian-archive-nala_0.1.0_all.deb
+	arch-chroot /mnt /bin/apt install ./volian-archive-keyring_0.1.0_all.deb
+	arch-chroot /mnt /bin/apt install ./volian-archive-nala_0.1.0_all.deb
 	sleep 1
-    	arch-chroot /mnt /bin/apt update && apt install nala-legacy -y
+    	arch-chroot /mnt /bin/apt update
+	arch-chroot /mnt /bin/apt install nala-legacy -y
     	sleep 1
-	echo "100"
-	) |
+	echo "100" |
 	zenity --progress \
 		--pulsate \
 		--no-cancel \
