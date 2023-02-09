@@ -18,9 +18,9 @@ usingSwap=0
 InstallWezTerm() {
 	(
 	echo "Adding WezTerm repo"
-	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
+	curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "Installing WezTerm.. request by: aydropunk"
-	arch-chroot /mnt /bin/dpkg -i wezterm-20221119-145034-49b9839f.Debian11.deb
+	dpkg --root /mnt -i wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "WezTerm Installed"
 	) 
 	sleep 5 |
@@ -31,16 +31,16 @@ InstallWezTerm() {
 InstallNVIDIA() {
 	(
 	echo "Adding NVIDIA repo...."
-	arch-chroot /mnt /bin/wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
+	wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
 	sleep 1
-	arch-chroot /mnt /bin/dpkg -i cuda-keyring_1.0-1_all.deb
+	dpkg --root /mnt -i cuda-keyring_1.0-1_all.deb
 	sleep 1
-	arch-chroot /mnt /bin/apt update
+	arch-chroot /mnt /bin/bash -c 'apt update'
 	sleep 1
 	clear
 	echo "Installing NVIDIA"
 	sleep 1
-	arch-chroot /mnt /bin/apt install nvidia-driver switcheroo-control -y
+	arch-chroot /mnt /bin/bash -c 'apt install nvidia-driver switcheroo-control -y'
 	sleep 1
 	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...." 
 	) 
@@ -48,7 +48,7 @@ InstallNVIDIA() {
 		zenity --progress \
 		--pulsate \
 		--no-cancel \
-		 --auto-close \
+		--auto-close \
 		--title="Installing NVIDIA" \
   		--text="Installing" \
   		--percentage=0
@@ -97,10 +97,6 @@ CreateUser() {
 				if [[ $sudoask -eq 0 ]]; then
 					echo "Adding to sudo group..."
 					usermod -R /mnt -aG sudo $user
-		
-					useradd -R /mnt -s /bin/bash -m $user
-    					passwd -R /mnt $user
-		
 					echo -e "The user $user has added to sudo group sucessfully!"
     				else
 					echo "This user it's not sudoer!"
@@ -108,6 +104,8 @@ CreateUser() {
 				if [[ $user == "" ]]; then
 					CreateUser
     				fi
+				useradd -R /mnt -s /bin/bash -m $user
+    				passwd -R /mnt $user
 				zenity --info \
 					title="User creation" \
 					width=255 \
@@ -118,14 +116,14 @@ CreateUser() {
 GetNala() {
 	(
 	echo "50"
-	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb 
+	curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb 
 	sleep 1
 	echo "60"
-	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb 
+	curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb 
 	sleep 1
 	echo "70"
-	arch-chroot /mnt /bin/dpkg -i volian-archive-keyring_0.1.0_all.deb  -y
-	arch-chroot /mnt /bin/dpkg -i volian-archive-nala_0.1.0_all.deb -y
+	dpkg --root /mnt -i volian-archive-keyring_0.1.0_all.deb
+	dpkg --root /mnt -i volian-archive-nala_0.1.0_all.deb
 	sleep 1
     	arch-chroot /mnt /bin/apt update && apt install nala-legacy -y
     	sleep 1
@@ -195,8 +193,12 @@ InstallKernel() {
 InstallProcess() {
 	(
 	unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs 
-	) |
+	) 
+	sleep 5 |
 		zenity --progress \
+		--pulsate \
+		--no-cancel \
+		--auto-close \
 		--title="Installing Demencia OS" \
   		--text="Installing...." \
   		--percentage=0
