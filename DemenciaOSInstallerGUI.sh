@@ -249,7 +249,7 @@ Install() {
        		--text="You must write <b>a DISK </b> for continue!"
 			Install
 		else
-			if [! -f /usr/bin/gparted ]; then
+			if [ ! -f /usr/bin/gparted ]; then
 				apt install gparted -y
 			else
 				gparted
@@ -269,7 +269,7 @@ Install() {
 	 --ok-label="Yes" \
 	 --cancel-label="No"
 	 swapoption=$?
-	 if [ $swapoption -equ 1 ]; then
+	 if [ $swapoption -eq 1 ]; then
 	 	usingSwap=0
 	 else
 		swapask=$(zenity --entry \
@@ -279,7 +279,7 @@ Install() {
 		--cancel-label="Exit" \
 		--text="Insert the swap partition ex /dev/sda3")
 		swappart=$?
-		if [ $swappart -equ 0]; then
+		if [ $swappart -eq 0]; then
 			if [ -z $swapask ]; then
 				usingSwap=0
 			else
@@ -302,7 +302,7 @@ Install() {
 	--text="Insert the root partition ex /dev/sda2")
 	rootask=$?
 
-	if [$rootask -equ 0]; then
+	if [$rootask -eq 0]; then
 		if [ -z $rootpart ]; then
 			exit
 		else
