@@ -156,7 +156,7 @@ InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
 	arch-chroot /mnt /bin/apt install wget -y
 	choosekernel=$(zenity --entry \
-		--title="Write your username" \
+		--title="Write the kernel" \
 		--width=250 \
 		--ok-label="OK" \
 		--cancel-label="Exit" \
@@ -254,12 +254,12 @@ InstallProcess() {
     nvidiaoption=$(zenity --question \
        --title="Demencia OS Installer" \
        --width=250 \
-	   --ok-label="Install" \
-	   --cancel-label="Quit" \
+	   --ok-label="OK" \
+	   --cancel-label="NO" \
        --text="You do want NVIDIA Drivers? (yes/no)" \
 	   )
 	   nvidiaask=$?
-    if [[ $nvidiaoption -eq 0 ]]; then
+    if [[ $nvidiaask -eq 0 ]]; then
     	InstallNVIDIA
 	else
 		zenity --info \
