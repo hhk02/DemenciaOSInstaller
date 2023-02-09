@@ -20,7 +20,7 @@ InstallWezTerm() {
 	echo "Adding WezTerm repo"
 	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "Installing WezTerm.. request by: aydropunk"
-	arch-chroot /mnt /bin/bash -c 'apt install -y ./wezterm-20221119-145034-49b9839f.Debian11.deb'
+	arch-chroot /mnt /bin/apt install -y ./wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "WezTerm Installed"
 	) |
 		zenity --progress \
@@ -33,16 +33,16 @@ InstallWezTerm() {
 InstallNVIDIA() {
 	(
 	echo "Adding NVIDIA repo...."
-	arch-chroot /mnt /bin/bash -c 'wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb'
+	arch-chroot /mnt /bin/wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
 	sleep 1
-	arch-chroot /mnt /bin/bash -c 'dpkg -i cuda-keyring_1.0-1_all.deb'
+	arch-chroot /mnt /bin/dpkg -i cuda-keyring_1.0-1_all.deb
 	sleep 1
-	arch-chroot /mnt /bin/bash -c 'apt update'
+	arch-chroot /mnt /bin/apt update
 	sleep 1
 	clear
 	echo "Installing NVIDIA"
 	sleep 1
-	arch-chroot /mnt /bin/bash -c 'apt install nvidia-driver switcheroo-control -y'
+	arch-chroot /mnt /bin/apt install nvidia-driver switcheroo-control -y
 	sleep 1
 	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...." 
 	) |
@@ -55,7 +55,7 @@ InstallNVIDIA() {
 MakeSwap() {
 	(
 		mkswap $swappart
-    	swapon $swappart
+    		swapon $swappart
 	) |
 		zenity --progress \
   			--title="Make SWAP" \
@@ -97,7 +97,7 @@ CreateUser() {
 					usermod -R /mnt -aG sudo $user
 		
 					useradd -R /mnt -s /bin/bash -m $user
-    					chgpasswd -R /mnt $user
+    					passwd -R /mnt $user
 		
 					echo -e "The user $user has added to sudo group sucessfully!"
     				else
@@ -116,15 +116,15 @@ CreateUser() {
 GetNala() {
 	(
 	echo "50"
-	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb' 
+	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb 
 	sleep 1
 	echo "60"
-	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb' 
+	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb 
 	sleep 1
 	echo "70"
-	arch-chroot /mnt /bin/bash -c 'apt install ./volian-archive*.deb  -y' 
+	arch-chroot /mnt /bin/apt install ./volian-archive*.deb  -y
 	sleep 1
-    arch-chroot /mnt /bin/bash -c 'apt update && apt install nala-legacy -y' 
+    arch-chroot /mnt /bin/apt update && apt install nala-legacy -y
     sleep 1
 	echo "100"
 	) |
@@ -142,7 +142,7 @@ GetNala() {
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
-	arch-chroot /mnt /bin/bash -c 'apt install wget -y'
+	arch-chroot /mnt /bin/apt install wget -y
 	echo "WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards"
 	echo "What kernel you do want (generic/xanmod/xanmod-lts) ?"
 	read choosekernel
@@ -157,9 +157,9 @@ InstallKernel() {
 		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
 		echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 		echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-		arch-chroot /mnt /bin/bash -c 'apt update -y'
-		arch-chroot /mnt /bin/bash -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
-		arch-chroot /mnt /bin/bash -c 'update-grub'
+		arch-chroot /mnt /bin/apt update -y
+		arch-chroot /mnt /bin/apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y
+		arch-chroot /mnt /sbin/update-grub
     		echo "Generic kernel installed!"
 	fi
     if [[ $choosekernel == "xanmod" ]]; then
@@ -169,10 +169,10 @@ InstallKernel() {
 	    echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    arch-chroot /mnt /bin/bash -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
-	    arch-chroot /mnt /bin/bash -c 'apt update -y'
-	    arch-chroot /mnt /bin/bash -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y'
-	    arch-chroot /mnt /bin/bash -c 'update-grub'
+	    arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
+	    arch-chroot /mnt /bin/apt update -y
+	    arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y
+	    arch-chroot /mnt /sbin/update-grub
 	    echo "XanMod Kernel Installed!"
     fi
     if [[ $choosekernel == "xanmod-lts" ]]; then
@@ -182,10 +182,10 @@ InstallKernel() {
 	    echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    arch-chroot /mnt /bin/bash -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
-	    arch-chroot /mnt /bin/bash -c 'apt update -y'
-	    arch-chroot /mnt /bin/bash -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y'
-	    arch-chroot /mnt /bin/bash -c 'update-grub'
+	    arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
+	    arch-chroot /mnt /bin/apt update -y
+	    arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y
+	    arch-chroot /mnt /sbin/update-grub
 	    echo "XanMod LTS Kernel Installed!"
     fi
 }
@@ -206,7 +206,7 @@ InstallProcess() {
     fi
     apt install arch-install-scripts -y
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    arch-chroot /mnt /bin/bash -c 'apt remove live-boot* live-tools -y'
+    arch-chroot /mnt /bin/apt remove live-boot* live-tools -y
     InstallKernel
     echo "You do want NVIDIA Drivers? (yes/no)"
     read nvidiaoption
@@ -215,17 +215,20 @@ InstallProcess() {
     fi
     GetNala
     InstallWezTerm
-    arch-chroot /mnt /bin/bash -c 'apt install grub-efi arch-install-scripts -y'
+    arch-chroot /mnt /bin/apt install grub-efi arch-install-scripts -y
     echo "Generating fstab file!"
     genfstab -U /mnt > /mnt/etc/fstab
-    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --removable'
-    arch-chroot /mnt /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS'
+    arch-chroot /mnt /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
+    arch-chroot /mnt /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
     arch-chroot /mnt /sbin/update-grub
     arch-chroot /mnt /sbin/update-initramfs -c -k all
     CreateUser
     ChangeKeyboardLanguage
     umount -l /mnt
-    echo "Installation complete!"
+    zenity --info \
+       --title="Finished" \
+       --width=250 \
+       --text="Installation complete!"
     exit
 }
 Install() {
