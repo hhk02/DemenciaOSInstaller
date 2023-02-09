@@ -333,6 +333,9 @@ Install() {
 				fi
 				mount $efipart /mnt/boot |
 					zenity --progress \
+					--pulsate \
+					--no-cancel \
+					--auto-close \
 					--title="Making partitions" \
   					--text="Making partitions" \
   					--percentage=0
@@ -354,8 +357,8 @@ if [[ $EUID = 0 ]]; then
 	zenity --question \
        --title="Demencia OS Installer" \
        --width=250 \
-	   --ok-label="Yes" \
-	   --cancel-label="Quit Installer" \
+	   --ok-label="Install" \
+	   --cancel-label="Quit" \
        --text="Welcome to the Demencia OS Installer! Do you want?"
 	option=$?
 	if [ $option = 0 ]; then
