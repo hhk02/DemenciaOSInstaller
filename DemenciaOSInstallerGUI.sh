@@ -204,7 +204,7 @@ InstallProcess() {
 		--no-cancel \
 		--auto-close \
 		--title="Installing Demencia OS" \
-  		--text="Installing...." \
+  		--text="Installing...."
   		--percentage=0
 
     if [[ $usingSwap = 0 ]]; then
@@ -374,8 +374,5 @@ if [[ $EUID = 0 ]]; then
 		exit
 	fi
 else
-	zenity --error \
-       --title="Error" \
-       --width=250 \
-       --text="You must run as <b>ROOT</b> for run!"
+	pkexec $PWD/DemenciaOSInstallerGUI.sh
 fi
