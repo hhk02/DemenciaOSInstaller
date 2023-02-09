@@ -79,7 +79,7 @@ MakeSwap() {
 
 # Metodo de cambio de idioma del teclado
 ChangeKeyboardLanguage() {
-    arch-chroot /mnt /usr/bin/wezterm start dpkg-reconfigure locales
+    arch-chroot /mnt/ /usr/bin/tilix -e dpkg-reconfigure locales
 }
 # Metodo de creación de usuario
 CreateUser() {
