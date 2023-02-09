@@ -11,6 +11,7 @@ rootpart=""
 swappart=""
 efioption=""
 user=""
+password=""
 isSudoer=""
 choosekernel=""
 usingSwap=0
@@ -79,12 +80,18 @@ CreateUser() {
 		--ok-label="OK" \
 		--cancel-label="Exit" \
 		--text="Insert your username")
+	password=$(zenity --password \
+		--title="Write your password" \
+		--width=250 \
+		--ok-label="OK" \
+		--cancel-label="Exit" \
+		--text="Password: ")
 			useransw=$?
 			if [ -z $user ]; then
 				CreateUser
 			else
 				useradd -R /mnt -s /bin/bash -m $user
-    				passwd -R /mnt $user
+    				echo $user:$password | chpasswd
 				isSudoer=$(zenity --question \
 					--title="Sudoer" \
 					--width=250 \
