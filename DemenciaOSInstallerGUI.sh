@@ -116,18 +116,13 @@ CreateUser() {
 # Obtener Nala
 GetNala() {
 	(
-	sleep 1
 	echo "50"
-	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb'
-	sleep 1
+	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb' sleep 1
 	echo "60"
-	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb'
-	sleep 1
+	arch-chroot /mnt /bin/bash -c 'curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb' sleep 1
 	echo "70"
-	arch-chroot /mnt /bin/bash -c 'apt install ./volian-archive*.deb  -y'
-	sleep 1
-    arch-chroot /mnt /bin/bash -c 'apt update && apt install nala-legacy -y'
-	sleep 1
+	arch-chroot /mnt /bin/bash -c 'apt install ./volian-archive*.deb  -y' sleep 1
+    arch-chroot /mnt /bin/bash -c 'apt update && apt install nala-legacy -y' sleep 1
 	echo "100"
 	) |
 	zenity --progress \
@@ -251,6 +246,7 @@ Install() {
 		else
 			if [ ! -f /usr/bin/gparted ]; then
 				apt install gparted -y
+				gparted
 			else
 				gparted
 			fi
@@ -302,7 +298,7 @@ Install() {
 	--text="Insert the root partition ex /dev/sda2")
 	rootask=$?
 
-	if [$rootask -eq 0]; then
+	if [ $rootask -eq 0 ]; then
 		if [ -z $rootpart ]; then
 			exit
 		else
@@ -322,7 +318,6 @@ Install() {
 					--width=250 \
 					--text="The partitions has been make filesystem sucessfully" \
 					InstallProcess
-		fi
 	fi
 }
 
