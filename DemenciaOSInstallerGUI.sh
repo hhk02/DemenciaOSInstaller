@@ -22,8 +22,7 @@ InstallWezTerm() {
 	echo "Installing WezTerm.. request by: aydropunk"
 	dpkg --root /mnt -i wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "WezTerm Installed"
-	) 
-	sleep 5 |
+	) |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
 	
 }
@@ -43,8 +42,7 @@ InstallNVIDIA() {
 	arch-chroot /mnt /bin/bash -c 'apt install nvidia-driver switcheroo-control -y'
 	sleep 1
 	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...." 
-	) 
-	sleep 5 |
+	) |
 		zenity --progress \
 		--pulsate \
 		--no-cancel \
@@ -130,8 +128,11 @@ GetNala() {
 	echo "100"
 	) |
 	zenity --progress \
-  		--title="Installing Nala" \
-  		--text="Installing" \
+		--pulsate \
+		--no-cancel \
+		--auto-close \
+		--title="Installing Nala" \
+  		--text="Installing...." \
   		--percentage=0
 	zenity --info \
 		--title="Installed nala" \
@@ -193,8 +194,7 @@ InstallKernel() {
 InstallProcess() {
 	(
 	unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs 
-	) 
-	sleep 5 |
+	) |
 		zenity --progress \
 		--pulsate \
 		--no-cancel \
