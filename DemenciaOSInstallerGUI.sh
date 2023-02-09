@@ -22,11 +22,9 @@ InstallWezTerm() {
 	echo "Installing WezTerm.. request by: aydropunk"
 	arch-chroot /mnt /bin/dpkg -i wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "WezTerm Installed"
-	) |
-		zenity --progress \
-  		--title="Installing WezTerm" \
-  		--text="Installing" \
-  		--percentage=0
+	) 
+	sleep 5 |
+		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
 	
 }
 
@@ -45,8 +43,12 @@ InstallNVIDIA() {
 	arch-chroot /mnt /bin/apt install nvidia-driver switcheroo-control -y
 	sleep 1
 	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...." 
-	) |
+	) 
+	sleep 5 |
 		zenity --progress \
+		--pulsate \
+		--no-cancel \
+		 --auto-close \
 		--title="Installing NVIDIA" \
   		--text="Installing" \
   		--percentage=0
