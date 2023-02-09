@@ -345,7 +345,7 @@ Install() {
 				zenity --info \
 				--title="Warning" \
 				--width=250 \
-				--text="$swapask"
+				--text="Swap has been created"
 				usingSwap=1
 			fi
 		else
@@ -371,7 +371,7 @@ Install() {
 				--width=250 \
 				--ok-label="OK" \
 				--cancel-label="Exit" \
-				--text="Insert EFI PARTITION EX /dev/sda1")
+				--text="Insert EFI partition ex: /dev/sda1")
 			efioption=$?
 			if [ $efioption -eq 0 ]; then
 				mkfs.vfat -F 32 $efipart 
