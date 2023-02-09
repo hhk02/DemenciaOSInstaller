@@ -76,7 +76,7 @@ MakeSwap() {
 
 # Metodo de cambio de idioma del teclado
 ChangeKeyboardLanguage() {
-    arch-chroot /mnt /usr/bin/wezterm dpkg-reconfigure locales
+    arch-chroot /mnt /usr/bin/wezterm start dpkg-reconfigure locales
 }
 # Metodo de creación de usuario
 CreateUser() {
