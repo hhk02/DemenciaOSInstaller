@@ -63,7 +63,14 @@ ChangeTimeZone() {
 		--ok-label="OK" \
 		--cancel-label="Exit" \
 		--text="Insert the timezone ex: Europe/Madrid")
-	arch-chroot /mnt/ /bin/timedatectl set-timezone $timezone
+		timeask=$?
+		if [ $timeask -eq 0 ]; then
+			if [ -z $timezone ]; then
+				ChangeTimeZone
+			else
+				arch-chroot /mnt /bin/timedatectl set-timezone $timezone
+			fi
+		fi
 	zenity --info \
 		--title="Timezone" \
 		--width=250 \
@@ -190,9 +197,9 @@ InstallKernel() {
 		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
 		echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 		echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-		arch-chroot /mnt /bin/apt update -y
-		arch-chroot /mnt /bin/apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y
-		arch-chroot /mnt /sbin/update-grub
+		arch-chroot /mnt /bin/sh -c 'apt update'
+		arch-chroot /mnt /bin/sh -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
+		arch-chroot /mnt /bin/sh -c 'update-grub'
     	echo "Generic kernel installed!" |
 				zenity --progress \
 				--pulsate \
@@ -210,11 +217,10 @@ InstallKernel() {
 	    	echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    	echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    	echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    	arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
-	    	arch-chroot /mnt /bin/apt update -y
-	    	arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y
-	    	arch-chroot /mnt /sbin/update-grub
-	echo "XanMod Kernel Installed!" |
+	    	arch-chroot /mnt /bin/sh -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
+	    	arch-chroot /mnt /bin/sh -c 'apt update'
+	    	arch-chroot /mnt /bin/sh -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y'
+	    	arch-chroot /mnt /bin/sh -c 'update-grub' |
 				zenity --progress \
 				--pulsate \
 				--no-cancel \
@@ -230,11 +236,10 @@ InstallKernel() {
 	   	echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    	echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
 	    	echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    	arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
-	    	arch-chroot /mnt /bin/apt update -y
-	    	arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y
-	    	arch-chroot /mnt /sbin/update-grub
-	   	echo "XanMod LTS Kernel Installed!" |
+	    	arch-chroot /mnt /bin/sh -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
+	    	arch-chroot /mnt /bin/sh -c 'apt update'
+	    	arch-chroot /mnt /bin/sh -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y'
+	    	arch-chroot /mnt /bin/sh -c 'update-grub' |
 				zenity --progress \
 				--pulsate \
 				--no-cancel \
