@@ -191,18 +191,18 @@ InstallKernel() {
   				--percentage=0
 
 	fi
-    if [[ $choosekernel == "xanmod" ]]; then
-	    echo "Adding non-free repos..."
-	    echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
-	    echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
-	    echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
-	    arch-chroot /mnt /bin/apt update -y
-	    arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y
-	    arch-chroot /mnt /sbin/update-grub
-	    echo "XanMod Kernel Installed!" |
+    	if [[ $choosekernel == "xanmod" ]]; then
+	    	echo "Adding non-free repos..."
+	    	echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
+	    	echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
+	    	echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    	echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    	echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
+	    	arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
+	    	arch-chroot /mnt /bin/apt update -y
+	    	arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y
+	    	arch-chroot /mnt /sbin/update-grub
+	echo "XanMod Kernel Installed!" |
 				zenity --progress \
 				--pulsate \
 				--no-cancel \
@@ -210,19 +210,19 @@ InstallKernel() {
 				--title="Installing XanMod kernel.." \
   				--text="Installing...." \
   				--percentage=0
-    fi
-    if [[ $choosekernel == "xanmod-lts" ]]; then
-	    echo "Adding non-free repos..."
-	    echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
-	    echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
-	    echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
-	    arch-chroot /mnt /bin/apt update -y
-	    arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y
-	    arch-chroot /mnt /sbin/update-grub
-	    echo "XanMod LTS Kernel Installed!" |
+    	fi
+    	if [[ $choosekernel == "xanmod-lts" ]]; then
+		echo "Adding non-free repos..."
+	    	echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
+	    	echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
+	   	echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    	echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
+	    	echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
+	    	arch-chroot /mnt /bin/wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -
+	    	arch-chroot /mnt /bin/apt update -y
+	    	arch-chroot /mnt /bin/apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y
+	    	arch-chroot /mnt /sbin/update-grub
+	   	echo "XanMod LTS Kernel Installed!" |
 				zenity --progress \
 				--pulsate \
 				--no-cancel \
@@ -230,7 +230,7 @@ InstallKernel() {
 				--title="Installing XanMod LTS kernel.." \
   				--text="Installing...." \
   				--percentage=0
-    fi
+    	fi
 }
 InstallProcess() {
 	(
