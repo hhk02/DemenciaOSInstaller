@@ -120,7 +120,7 @@ CreateUser() {
 		useransw=$?
 			if [[ $useransw -eq 0 ]]; then
 				useradd -R /mnt -s /bin/bash -m $user
-    				echo $user:$password | sudo chpasswd
+    				arch-chroot /mnt /bin/sh -c "echo $user:$password | sudo chpasswd"
 				isSudoer=$(zenity --question \
 					--title="Sudoer" \
 					--width=250 \
