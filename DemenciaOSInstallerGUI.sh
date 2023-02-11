@@ -68,7 +68,7 @@ ChangeTimeZone() {
 			if [ -z $timezone ]; then
 				ChangeTimeZone
 			else
-				arch-chroot /mnt /bin/timedatectl set-timezone $timezone
+				arch-chroot /mnt /bin/sh -c "timedatectl set-timezone $timezone"
 			fi
 		fi
 	zenity --info \
