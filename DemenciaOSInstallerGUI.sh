@@ -79,7 +79,7 @@ MakeSwap() {
 
 # Metodo de cambio de idioma del teclado
 ChangeKeyboardLanguage() {
-    arch-chroot /mnt/ /usr/bin/tilix -e dpkg-reconfigure locales
+    arch-chroot /mnt/ /bin/sh -c "/sbin/dpkg-reconfigure locales"
 }
 # Metodo de creación de usuario
 CreateUser() {
