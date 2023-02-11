@@ -56,6 +56,21 @@ InstallNVIDIA() {
        --width=250 \
        --text="NVIDIA Drivers installed!"
 }
+ChangeTimeZone() {
+	timezone=$(zenity --entry \
+		--title="TimeZone" \
+		--width=250 \
+		--ok-label="OK" \
+		--cancel-label="Exit" \
+		--text="Insert the timezone ex: Europe/Madrid")
+	arch-chroot /mnt/ /bin/timedatectl set-timezone $timezone
+	zenity --info \
+		--title="Timezone" \
+		--width=250 \
+		--ok-label="OK" \
+		--cancel-label="Exit" \
+		--text="$timezone has been set successfully!"
+}
 
 MakeSwap() {
 	(
@@ -79,7 +94,7 @@ MakeSwap() {
 
 # Metodo de cambio de idioma del teclado
 ChangeKeyboardLanguage() {
-    arch-chroot /mnt/ /bin/sh -c "/sbin/dpkg-reconfigure locales"
+    arch-chroot /mnt /sbin/dpkg-reconfigure locales
 }
 # Metodo de creación de usuario
 CreateUser() {
@@ -98,7 +113,7 @@ CreateUser() {
 		useransw=$?
 			if [[ $useransw -eq 0 ]]; then
 				useradd -R /mnt -s /bin/bash -m $user
-    			echo "$user":"$password" | chpasswd
+    				echo $user:$password | sudo chpasswd
 				isSudoer=$(zenity --question \
 					--title="Sudoer" \
 					--width=250 \
@@ -117,9 +132,6 @@ CreateUser() {
 					title="User creation" \
 					width=255 \
 					text="User created sucessfully!"
-				if [[ $user == "" ]]; then
-					CreateUser
-    			fi
 				if [ -z $user ]; then
 					CreateUser
 				fi
@@ -281,6 +293,7 @@ InstallProcess() {
     arch-chroot /mnt /sbin/update-grub
     arch-chroot /mnt /sbin/update-initramfs -c -k all
     CreateUser
+    ChangeTimeZone
     ChangeKeyboardLanguage
     umount -l /mnt
     zenity --info \
