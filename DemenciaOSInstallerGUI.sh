@@ -136,7 +136,7 @@ InstallKernel() {
 }
 InstallProcess() {
 	(
-	unsquashfs -f -d /mnt/target/ /mnt/cdrom/image.squashfs 
+	unsquashfs -comp gzip -f -d /mnt/target/ /mnt/cdrom/image.squashfs 
 	) |
 		zenity --progress \
 		--pulsate \
