@@ -171,10 +171,11 @@ InstallProcess() {
     arch-chroot /mnt/target /bin/emerge --oneshot grub arch-install-scripts
     echo "Generating fstab file!"
     genfstab -U /mnt/target > /mnt/etc/fstab
+    arch-chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
     arch-chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
     arch-chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
     arch-chroot /mnt/target /sbin/grub-mkconfig -o /boot/grub/grub.cfg
-    arch-chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
+    arch-chroot /mnt/target /usr/sbin/dracut
     CreateUser
     ChangeTimeZone
     ChangeKeyboardLanguage
