@@ -20,7 +20,7 @@ InstallWezTerm() {
 	chroot /mnt/target /bin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
 	chroot /mnt/target /usr/sbin/dispatch-conf
 	chroot /mnt/target /bin/emerge --oneshot wezterm
-	chroot /mnt/target /bin/emerge --oneshot genfstab
+	
 	echo "WezTerm Installed" |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
 		zenity --info \
@@ -274,8 +274,14 @@ Install() {
 if [[ $EUID = 0 ]]; then
 	if [ ! -f /usr/bin/zenity ]; then
 		emerge --sync
-		emerge --oneshot squashfs-tools
+		emerge --oneshot app-arch/lzma
+		git clone https://github.com/plougher/squashfs-tools.git
+		sed -i 's/#XZ_SUPPORT/XZ_SUPPORT/' squashfs-tools/squashfs-tools/Makefile
+		cd squashfs-tools/squashfs-tools/
+		make
+		make install
 		emerge --oneshot zenity
+		emerge --oneshot genfstab
 		mkdir -p /mnt/target/
 		
 	fi
