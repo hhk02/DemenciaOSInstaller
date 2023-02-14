@@ -17,9 +17,10 @@ isSudoer=""
 
 InstallWezTerm() {
 	echo "Installing WezTerm.. request by: aydropunk"
-	arch-chroot /mnt/target /bin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
-	arch-chroot /mnt/target /usr/sbin/dispatch-conf
-	arch-chroot /mnt/target /bin/emerge --oneshot wezterm
+	chroot /mnt/target /bin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
+	chroot /mnt/target /usr/sbin/dispatch-conf
+	chroot /mnt/target /bin/emerge --oneshot wezterm
+	chroot /mnt/target /bin/emerge --oneshot genfstab
 	echo "WezTerm Installed" |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
 		zenity --info \
@@ -31,7 +32,7 @@ InstallWezTerm() {
 InstallNVIDIA() {
 	echo "Adding NVIDIA repo...."
 	sleep 1
-	arch-chroot /mnt/target /bin/emerge --oneshot x11-drivers/nvidia-drivers sys-power/switcheroo-control
+	chroot /mnt/target /bin/emerge --oneshot x11-drivers/nvidia-drivers sys-power/switcheroo-control
 	sleep 1
 	clear
 	echo "Installing NVIDIA"
@@ -62,7 +63,7 @@ ChangeTimeZone() {
 			if [ -z $timezone ]; then
 				ChangeTimeZone
 			else
-				arch-chroot /mnt/target /bin/sh -c "timedatectl set-timezone $timezone"
+				chroot /mnt/target /bin/sh -c "timedatectl set-timezone $timezone"
 			fi
 		fi
 	zenity --info \
@@ -76,7 +77,7 @@ ChangeTimeZone() {
 
 # Metodo de cambio de idioma del teclado
 ChangeKeyboardLanguage() {
-    arch-chroot /mnt/target /usr/sbin/locale-gen -G es_ES.UTF-8
+    chroot /mnt/target /usr/sbin/locale-gen -G es_ES.UTF-8
 }
 # Metodo de creación de usuario
 CreateUser() {
@@ -95,7 +96,7 @@ CreateUser() {
 		useransw=$?
 			if [[ $useransw -eq 0 ]]; then
 				useradd -R /mnt/target -s /bin/bash -m $user
-    				arch-chroot /mnt/target /bin/echo $user:$password | sudo chpasswd
+    				chroot /mnt/target /bin/echo $user:$password | sudo chpasswd
 				isSudoer=$(zenity --question \
 					--title="Sudoer" \
 					--width=250 \
@@ -122,8 +123,8 @@ CreateUser() {
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
-	arch-chroot /mnt/target /bin/emerge --oneshot wget
-	arch-chroot /mnt/target /bin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
+	chroot /mnt/target /bin/emerge --oneshot wget
+	chroot /mnt/target /bin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
     	echo "Generic kernel installed!" |
 				zenity --progress \
 				--pulsate \
@@ -146,7 +147,6 @@ InstallProcess() {
   		--text="Installing...." \
   		--percentage=0
 
-    emerge --oneshot arch-install-scripts
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
     InstallKernel
     echo "You do want NVIDIA Drivers? (yes/no)"
@@ -168,14 +168,14 @@ InstallProcess() {
     fi
     GetNala
     InstallWezTerm
-    arch-chroot /mnt/target /bin/emerge --oneshot grub arch-install-scripts
+    chroot /mnt/target /bin/emerge --oneshot grub
     echo "Generating fstab file!"
     genfstab -U /mnt/target > /mnt/etc/fstab
-    arch-chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
-    arch-chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
-    arch-chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
-    arch-chroot /mnt/target /sbin/grub-mkconfig -o /boot/grub/grub.cfg
-    arch-chroot /mnt/target /usr/sbin/dracut
+    chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
+    chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
+    chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
+    chroot /mnt/target /sbin/grub-mkconfig -o /boot/grub/grub.cfg
+    chroot /mnt/target /usr/sbin/dracut
     CreateUser
     ChangeTimeZone
     ChangeKeyboardLanguage
