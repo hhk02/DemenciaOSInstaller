@@ -49,13 +49,12 @@ if [[ $EUID = 0 ]]; then
 	echo "MAKEOPTS="-j2""
 	nano -w /mnt/gentoo/etc/portage/make.conf
 	echo "Select mirror list"
-	mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
+	arch-chroot /mnt/gentoo /bin/bash -c 'mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf'
 	mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 	echo "Copying default repository configuration!"
 	cp -v /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 	cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 	echo "Changing into target.."
-	source /etc/profile
 	mount $efi_partition /mnt/gentoo/boot
 	arch-chroot /mnt/gentoo /bin/bash -c 'emerge-webrsync'
 	echo "Syncing repos!"
