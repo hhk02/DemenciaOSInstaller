@@ -17,9 +17,9 @@ isSudoer=""
 
 InstallWezTerm() {
 	echo "Installing WezTerm.. request by: aydropunk"
-	chroot /mnt/target /usr/sbin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
-	chroot /mnt/target /usr/sbin/dispatch-conf
-	chroot /mnt/target /bin/emerge --oneshot wezterm
+	chroot /mnt/target /usr/bin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
+	chroot /mnt/target /usr/bin/dispatch-conf
+	chroot /mnt/target /usr/bin/emerge --oneshot wezterm
 	
 	echo "WezTerm Installed" |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
@@ -32,7 +32,7 @@ InstallWezTerm() {
 InstallNVIDIA() {
 	echo "Adding NVIDIA repo...."
 	sleep 1
-	chroot /mnt/target /bin/emerge --oneshot x11-drivers/nvidia-drivers sys-power/switcheroo-control
+	chroot /mnt/target /usr/bin/emerge --oneshot x11-drivers/nvidia-drivers sys-power/switcheroo-control
 	sleep 1
 	clear
 	echo "Installing NVIDIA"
@@ -123,8 +123,8 @@ CreateUser() {
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
-	chroot /mnt/target /usr/sbin/emerge --oneshot wget
-	chroot /mnt/target /usr/sbin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
+	chroot /mnt/target /usr/bin/emerge --oneshot wget
+	chroot /mnt/target /usr/bin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
     	echo "Generic kernel installed!" |
 				zenity --progress \
 				--pulsate \
@@ -168,7 +168,7 @@ InstallProcess() {
     fi
     GetNala
     InstallWezTerm
-    chroot /mnt/target /bin/emerge --oneshot grub
+    chroot /mnt/target /usr/bin/emerge --oneshot grub
     echo "Generating fstab file!"
     genfstab -U /mnt/target > /mnt/etc/fstab
     chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
