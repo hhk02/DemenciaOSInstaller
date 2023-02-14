@@ -17,7 +17,7 @@ isSudoer=""
 
 InstallWezTerm() {
 	echo "Installing WezTerm.. request by: aydropunk"
-	chroot /mnt/target /bin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
+	chroot /mnt/target /usr/sbin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
 	chroot /mnt/target /usr/sbin/dispatch-conf
 	chroot /mnt/target /bin/emerge --oneshot wezterm
 	
