@@ -17,9 +17,9 @@ isSudoer=""
 
 InstallWezTerm() {
 	echo "Installing WezTerm.. request by: aydropunk"
-	chroot /mnt/target /usr/bin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
+	emerge --root=/mnt/target --autounmask=y --autounmask-write x11-terms/wezterm
 	chroot /mnt/target /usr/bin/dispatch-conf
-	chroot /mnt/target /usr/bin/emerge --oneshot wezterm
+	emerge --root=/mnt/target --oneshot wezterm
 	
 	echo "WezTerm Installed" |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
@@ -32,7 +32,7 @@ InstallWezTerm() {
 InstallNVIDIA() {
 	echo "Adding NVIDIA repo...."
 	sleep 1
-	chroot /mnt/target /usr/bin/emerge --oneshot x11-drivers/nvidia-drivers sys-power/switcheroo-control
+	emerge --root=/mnt/target --oneshot x11-drivers/nvidia-drivers sys-power/switcheroo-control
 	sleep 1
 	clear
 	echo "Installing NVIDIA"
@@ -123,12 +123,8 @@ CreateUser() {
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
-	mount --rbind /dev /mnt/target/dev
-	mount --rbind /proc /mnt/target/proc
-	mount --rbind /sys /mnt/target/sys
-	
-	chroot /mnt/target /usr/bin/emerge --oneshot wget
-	chroot /mnt/target /usr/bin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
+	emerge --root=/mnt/target --oneshot wget
+	emerge --root=/mnt/target --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
     	echo "Generic kernel installed!" |
 				zenity --progress \
 				--pulsate \
@@ -172,10 +168,10 @@ InstallProcess() {
     fi
     GetNala
     InstallWezTerm
-    chroot /mnt/target /usr/bin/emerge --oneshot grub
+    emerge --root=/mnt/target --oneshot grub
     echo "Generating fstab file!"
-    genfstab -U /mnt/target > /mnt/etc/fstab
-    chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
+    genfstab -U /mnt/target > /mnt/target/etc/fstab
+    emerge --root=/mnt/target --oneshot sys-kernel/dracut
     chroot /mnt/target /usr/sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
     chroot /mnt/target /usr/sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
     chroot /mnt/target /usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg
