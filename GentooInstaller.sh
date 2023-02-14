@@ -41,6 +41,11 @@ if [[ $EUID = 0 ]]; then
 	wget http://gentoo.mirrors.ovh.net/gentoo-distfiles/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20230129T164658Z.tar.xz
 	echo "Extracting"
 	tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+	wget https://github.com/archlinux/arch-install-scripts/archive/master.zip
+	unzip master.zip
+	cd arch-install-scripts-master/
+	make
+	make install
 	echo "# Configuraciones del compilador a aplicar en cualquier lenguaje\n
 	COMMON_CFLAGS="-march=native -O2 -pipe"\n
 	# Use los mismos valores en ambas variables\n
