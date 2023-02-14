@@ -1,26 +1,25 @@
 #!/bin/bash
 # EXPERIMENTAL 
-# Demencia OS Installer GUI  by hhk02
+# Demencia OS Installer GUI GENTOO EDITION  by hhk02
 
 # Variables
-swapoption=""
+#swapoption=""
 disk=""
-swapoption=""
+#swapoption=""
 efipart=""
 rootpart=""
-swappart=""
+#swappart=""
 efioption=""
 user=""
 password=""
 isSudoer=""
-choosekernel=""
-usingSwap=0
+#usingSwap=0
 
 InstallWezTerm() {
-	echo "Adding WezTerm repo"
-	arch-chroot /mnt /bin/curl -LO https://github.com/wez/wezterm/releases/download/20221119-145034-49b9839f/wezterm-20221119-145034-49b9839f.Debian11.deb
 	echo "Installing WezTerm.. request by: aydropunk"
-	arch-chroot /mnt /bin/apt install ./wezterm-20221119-145034-49b9839f.Debian11.deb
+	arch-chroot /mnt/target /bin/emerge --autounmask=y --autounmask-write x11-terms/wezterm
+	arch-chroot /mnt/target /usr/sbin/dispatch-conf
+	arch-chroot /mnt/target /bin/emerge --oneshot wezterm
 	echo "WezTerm Installed" |
 		zenity --progress --pulsate --no-cancel --auto-close --text="Installing"
 		zenity --info \
@@ -31,16 +30,11 @@ InstallWezTerm() {
 
 InstallNVIDIA() {
 	echo "Adding NVIDIA repo...."
-	arch-chroot /mnt /usr/bin/wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
 	sleep 1
-	arch-chroot /mnt /bin/apt install ./cuda-keyring_1.0-1_all.deb
-	sleep 1
-	arch-chroot /mnt /bin/apt update
+	arch-chroot /mnt/target /bin/emerge --oneshot x11-drivers/nvidia-drivers sys-power/switcheroo-control
 	sleep 1
 	clear
 	echo "Installing NVIDIA"
-	sleep 1
-	arch-chroot /mnt /bin/apt install nvidia-driver switcheroo-control -y
 	sleep 1
 	echo "If doesn't show errors it's posible the NVIDIA Drivers has been installed...."  |
 		zenity --progress \
@@ -68,7 +62,7 @@ ChangeTimeZone() {
 			if [ -z $timezone ]; then
 				ChangeTimeZone
 			else
-				arch-chroot /mnt /bin/sh -c "timedatectl set-timezone $timezone"
+				arch-chroot /mnt/target /bin/sh -c "timedatectl set-timezone $timezone"
 			fi
 		fi
 	zenity --info \
@@ -79,29 +73,10 @@ ChangeTimeZone() {
 		--text="$timezone has been set successfully!"
 }
 
-MakeSwap() {
-	(
-		mkswap $swappart
-    		swapon $swappart
-	) |
-		zenity --progress \
-			--pulsate \
-			--no-cancel \
-			--auto-close \
-  			--title="Make SWAP" \
-  			--text="Creating swap...." \
-  			--percentage=0 
-		zenity --info \
-			--title="Swap sucessfull!" \
-			--text="Swap Created!" \
-			--width=255
-		
-
-}
 
 # Metodo de cambio de idioma del teclado
 ChangeKeyboardLanguage() {
-    arch-chroot /mnt /sbin/dpkg-reconfigure locales
+    arch-chroot /mnt/target /usr/sbin/locale-gen -G es_ES.UTF-8
 }
 # Metodo de creación de usuario
 CreateUser() {
@@ -119,8 +94,8 @@ CreateUser() {
 		--text="Password: ")
 		useransw=$?
 			if [[ $useransw -eq 0 ]]; then
-				useradd -R /mnt -s /bin/bash -m $user
-    				arch-chroot /mnt /bin/echo $user:$password | sudo chpasswd
+				useradd -R /mnt/target -s /bin/bash -m $user
+    				arch-chroot /mnt/target /bin/echo $user:$password | sudo chpasswd
 				isSudoer=$(zenity --question \
 					--title="Sudoer" \
 					--width=250 \
@@ -130,7 +105,7 @@ CreateUser() {
 				sudoask=$?
 				if [[ $sudoask -eq 0 ]]; then
 					echo "Adding to sudo group..."
-					usermod -R /mnt -aG sudo $user
+					usermod -R /mnt/target -aG sudo $user
 					echo -e "The user $user has added to sudo group sucessfully!"
     				else
 					echo "This user it's not sudoer!"
@@ -144,62 +119,11 @@ CreateUser() {
 				fi
 			fi
 }
-# Obtener Nala
-GetNala() {
-	echo "50"
-	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/b20bd8237a9b20f5a82f461ed0704ad4/volian-archive-keyring_0.1.0_all.deb 
-	sleep 1
-	echo "60"
-	arch-chroot /mnt /bin/curl -O https://gitlab.com/volian/volian-archive/uploads/d6b3a118de5384a0be2462905f7e4301/volian-archive-nala_0.1.0_all.deb 
-	sleep 1
-	echo "70"
-	arch-chroot /mnt /bin/apt install ./volian-archive-keyring_0.1.0_all.deb
-	arch-chroot /mnt /bin/apt install ./volian-archive-nala_0.1.0_all.deb
-	sleep 1
-    arch-chroot /mnt /bin/apt update
-	arch-chroot /mnt /bin/apt install nala-legacy -y
-    sleep 1
-	echo "100" |
-	zenity --progress \
-		--pulsate \
-		--no-cancel \
-		--auto-close \
-		--title="Installing Nala" \
-  		--text="Installing...." \
-  		--percentage=0
-	zenity --info \
-		--title="Installed nala" \
-		--text="Nala installed sucessfully!" \
-		--width=255
-	
-}
-
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
-	arch-chroot /mnt /bin/apt install wget -y
-	choosekernel=$(zenity --entry \
-		--title="Write the kernel" \
-		--width=250 \
-		--ok-label="OK" \
-		--cancel-label="Exit" \
-		--text="WARNING: The XanMod kernel or others kernels maybe causes errors to install NVIDIA video cards, What kernel you do want (generic/xanmod/xanmod-lts) ?"
-		)
-		kernelask=$?
-	echo -e "Kernel selected:" $choosekernel
-
-	if [[ -z $choosekernel ]]; then
-		InstallKernel
-	fi
-	if [[ $choosekernel == "generic" ]]; then
-		echo "Adding non-free repos..."
-		echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
-		echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
-		echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-		echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-		arch-chroot /mnt /bin/sh -c 'apt update'
-		arch-chroot /mnt /bin/sh -c 'apt install linux-image-amd64 linux-headers-amd64 firmware-linux firmware-linux-nonfree -y'
-		arch-chroot /mnt /bin/sh -c 'update-grub'
+	arch-chroot /mnt/target /bin/emerge --oneshot wget
+	arch-chroot /mnt/target /bin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
     	echo "Generic kernel installed!" |
 				zenity --progress \
 				--pulsate \
@@ -209,49 +133,10 @@ InstallKernel() {
   				--text="Installing...." \
   				--percentage=0
 
-	fi
-    	if [[ $choosekernel == "xanmod" ]]; then
-	    	echo "Adding non-free repos..."
-	    	echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
-	    	echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
-	    	echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    	echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    	echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    	arch-chroot /mnt /bin/sh -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
-	    	arch-chroot /mnt /bin/sh -c 'apt update'
-	    	arch-chroot /mnt /bin/sh -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-x64v3 -y'
-	    	arch-chroot /mnt /bin/sh -c 'update-grub' |
-				zenity --progress \
-				--pulsate \
-				--no-cancel \
-				--auto-close \
-				--title="Installing XanMod kernel.." \
-  				--text="Installing...." \
-  				--percentage=0
-    	fi
-    	if [[ $choosekernel == "xanmod-lts" ]]; then
-		echo "Adding non-free repos..."
-	    	echo 'deb http://deb.debian.org/debian/ bullseye main contrib non-free' > /mnt/etc/apt/sources.list
-	    	echo 'deb-src http://deb.debian.org/debian/ bullseye main contrib non-free' >> /mnt/etc/apt/sources.list
-	   	echo 'deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    	echo 'deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free' >> /mnt/etc/apt/sources.list
-	    	echo 'deb http://deb.xanmod.org releases main' | sudo tee /mnt/etc/apt/sources.list.d/xanmod-kernel.list
-	    	arch-chroot /mnt /bin/sh -c 'wget -qO - https://dl.xanmod.org/gpg.key | sudo apt-key --keyring /etc/apt/trusted.gpg.d/xanmod-kernel.gpg add -'
-	    	arch-chroot /mnt /bin/sh -c 'apt update'
-	    	arch-chroot /mnt /bin/sh -c 'apt install firmware-linux firmware-linux-nonfree linux-xanmod-lts -y'
-	    	arch-chroot /mnt /bin/sh -c 'update-grub' |
-				zenity --progress \
-				--pulsate \
-				--no-cancel \
-				--auto-close \
-				--title="Installing XanMod LTS kernel.." \
-  				--text="Installing...." \
-  				--percentage=0
-    	fi
 }
 InstallProcess() {
 	(
-	unsquashfs -f -d /mnt/ /run/live/medium/live/filesystem.squashfs 
+	unsquashfs -f -d /mnt/target/ /mnt/cdrom/image.squashfs 
 	) |
 		zenity --progress \
 		--pulsate \
@@ -261,15 +146,8 @@ InstallProcess() {
   		--text="Installing...."
   		--percentage=0
 
-    if [[ $usingSwap = 0 ]]; then
-	    # Remove this file to fix a issue in boot (/scripts/lock-block)
-	    rm /mnt/etc/initramfs-tools/conf.d/resume
-    else
-	    MakeSwap
-    fi
-    apt install arch-install-scripts -y
+    emerge --oneshot arch-install-scripts
     # Montar la partición EFI para posteriormente pueda detectar los nucleos y asi generar el GRUB
-    arch-chroot /mnt /bin/apt remove live-boot* live-tools -y
     InstallKernel
     echo "You do want NVIDIA Drivers? (yes/no)"
     nvidiaoption=$(zenity --question \
@@ -290,17 +168,17 @@ InstallProcess() {
     fi
     GetNala
     InstallWezTerm
-    arch-chroot /mnt /bin/apt install grub-efi arch-install-scripts -y
+    arch-chroot /mnt/target /bin/emerge --oneshot grub arch-install-scripts
     echo "Generating fstab file!"
-    genfstab -U /mnt > /mnt/etc/fstab
-    arch-chroot /mnt /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
-    arch-chroot /mnt /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
-    arch-chroot /mnt /sbin/update-grub
-    arch-chroot /mnt /sbin/update-initramfs -c -k all
+    genfstab -U /mnt/target > /mnt/etc/fstab
+    arch-chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
+    arch-chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
+    arch-chroot /mnt/target /sbin/grub-mkconfig -o /boot/grub/grub.cfg
+    arch-chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
     CreateUser
     ChangeTimeZone
     ChangeKeyboardLanguage
-    umount -l /mnt
+    umount -l /mnt/target
     zenity --info \
        --title="Finished" \
        --width=250 \
@@ -330,7 +208,7 @@ Install() {
 			Install
 		else
 			if [ ! -f /usr/bin/gparted ]; then
-				apt install gparted -y
+				emerge --oneshot gparted
 				gparted
 			else
 				gparted
@@ -341,38 +219,6 @@ Install() {
        --title="Closing" \
        --width=250 \
        --text="ABORTED BY USER!"
-	fi
-	
-	zenity --question \
-	 --title="Swap Partition" \
-	 --width=250 \
-	 --text="Do you want Swap?" \
-	 --ok-label="Yes" \
-	 --cancel-label="No"
-	 swapoption=$?
-	 if [ $swapoption -eq 1 ]; then
-	 	usingSwap=0
-	 else
-		swapask=$(zenity --entry \
-		--title="Write your swap partition" \
-		--width=250 \
-		--ok-label="OK" \
-		--cancel-label="Exit" \
-		--text="Insert the swap partition ex /dev/sda3")
-		swappart=$?
-		if [ $swappart -eq 0]; then
-			if [ -z $swapask ]; then
-				usingSwap=0
-			else
-				zenity --info \
-				--title="Warning" \
-				--width=250 \
-				--text="Swap has been created"
-				usingSwap=1
-			fi
-		else
-			Install
-		fi
 	fi
 
 	rootpart=$(zenity --entry \
@@ -402,10 +248,10 @@ Install() {
 				sleep 1
 				mount $rootpart /mnt 
 				sleep 1
-				if [ ! -d /mnt/boot ]; then
-					mkdir /mnt/boot 
+				if [ ! -d /mnt/target/boot ]; then
+					mkdir /mnt/target/boot 
 				fi
-				mount $efipart /mnt/boot |
+				mount $efipart /mnt/target/boot |
 					zenity --progress \
 					--pulsate \
 					--no-cancel \
@@ -426,7 +272,11 @@ Install() {
 }
 if [[ $EUID = 0 ]]; then
 	if [ ! -f /usr/bin/zenity ]; then
-		apt install zenity -y
+		emerge --sync
+		emerge --oneshot squashfs-tools
+		emerge --oneshot zenity
+		mkdir -p /mnt/target/
+		
 	fi
 	zenity --question \
        --title="Demencia OS Installer" \
