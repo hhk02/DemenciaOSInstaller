@@ -200,7 +200,7 @@ Install() {
 	diskansw=$?
 	if [ $diskansw -eq 0 ]
 	then
-		if [-z $disk]
+		if [ -z $disk ]
 		then
 			zenity --error \
        		--title="Error" \
