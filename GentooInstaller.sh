@@ -56,55 +56,51 @@ if [[ $EUID = 0 ]]; then
 	cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 	echo "Changing into target.."
 	source /etc/profile
-	arch-chroot /mnt/gentoo /bin/bash -c mount $efi_partition /boot
-	arch-chroot /mnt/gentoo /bin/bash -c emerge-webrsync
+	mount $efi_partition /mnt/gentoo/boot
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge-webrsync'
 	echo "Syncing repos!"
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --sync
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --sync --quiet
-	arch-chroot /mnt/gentoo /bin/bash -c eselect profile list
-	echo "Write you do want: ex: 2"
-	read selection
-	arch-chroot /mnt/gentoo /bin/bash -c eselect profile set $selection
-	arch-chroot /mnt/gentoo /bin/bash -c ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --sync'
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --sync --quiet'
+	echo "Installing KDE Plasma with SystemD"
+	arch-chroot /mnt/gentoo /bin/bash -c 'eselect profile set 7'
+	arch-chroot /mnt/gentoo /bin/bash -c 'ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime'
 	echo "Done!"
 	echo "es_ES.UTF-8 UTF-8"
 	echo "es_MX.UTF-8 UTF-8"
 	echo "Write in the locale.gen!"
 	
 	nano -w /mnt/gentoo/etc/locale.gen
-	arch-chroot /mnt/gentoo /bin/bash -c locale-gen
-	arch-chroot /mnt/gentoo /bin/bash -c env-update && source /etc/profile
-	arch-chroot /mnt/gentoo /bin/bash -c export PS1="(chroot) ${PS1}"
+	arch-chroot /mnt/gentoo /bin/bash -c 'locale-gen'
+	arch-chroot /mnt/gentoo /bin/bash -c 'env-update && source /etc/profile'
+	arch-chroot /mnt/gentoo /bin/bash -c 'export PS1="(chroot) ${PS1}"'
 	echo "Installing kernel...."
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot sys-kernel/gentoo-kernel-bin
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot sys-kernel/linux-headers
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot sys-kernel/linux-firmware
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot sys-kernel/genkernel
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/gentoo-kernel-bin'
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/linux-headers'
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/linux-firmware'
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/genkernel'
 	genfstab /mnt/gentoo > /mnt/gentoo/etc/fstab
-	arch-chroot /mnt/gentoo /bin/bash -c genkernel all
+	arch-chroot /mnt/gentoo /bin/bash -c 'genkernel all'
 	ls /mnt/gentoo/boot/vmlinu* /mnt/gentoo/boot/initramfs*
 	echo "Cleaning..."
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --depclean
-	echo "Set the hostname:" 
-	read hostname
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --depclean'
 	echo $hostname > /mnt/gentoo/etc/hostname
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot net-misc/dhcpcd
-	arch-chroot /mnt/gentoo /bin/bash -c systemctl enable --now dhcpcd
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot net-misc/dhcpcd'
+	arch-chroot /mnt/gentoo /bin/bash -c 'systemctl enable --now dhcpcd'
 	echo "Creating hosts"
 	touch /mnt/gentoo/etc/hosts
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot sys-apps/pcmciautils
-	arch-chroot /mnt/gentoo /bin/bash -c passwd
-	arch-chroot /mnt/gentoo /bin/bash -c systemd-firstboot --prompt --setup-machine-id
-	arch-chroot /mnt/gentoo /bin/bash -c systemctl preset-all
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-apps/pcmciautils'
+	arch-chroot /mnt/gentoo /bin/bash -c 'passwd'
+	arch-chroot /mnt/gentoo /bin/bash -c 'systemd-firstboot --prompt --setup-machine-id'
+	arch-chroot /mnt/gentoo /bin/bash -c 'systemctl preset-all'
 	echo "Installing Wireless support"
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot net-wireless/iw net-wireless/wpa_supplicant
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot net-wireless/iw net-wireless/wpa_supplicant'
 	echo "Installing GRUB"
 	echo 'GRUB_PLATFORMS="efi-64"' >> /mnt/gentoo/etc/portage/make.conf
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --oneshot --verbose sys-boot/grub
-	arch-chroot /mnt/gentoo /bin/bash -c emerge --update --newuse --verbose sys-boot/grub
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot --verbose sys-boot/grub'
+	arch-chroot /mnt/gentoo /bin/bash -c 'emerge --update --newuse --verbose sys-boot/grub'
 	echo "Installing bootloader!"
-	arch-chroot /mnt/gentoo /bin/bash -c grub-install --target=x86_64-efi --efi-directory=/boot
-	arch-chroot /mnt/gentoo /bin/bash -c grub-mkconfig -o /boot/grub/grub.cfg
+	arch-chroot /mnt/gentoo /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot'
+	arch-chroot /mnt/gentoo /bin/bash -c 'grub-mkconfig -o /boot/grub/grub.cfg'
 	systemctl reboot	
 else
 	echo "You must run this as root!"
