@@ -123,6 +123,10 @@ CreateUser() {
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
+	mount --rbind /dev /mnt/target/dev
+	mount --rbind /proc /mnt/target/proc
+	mount --rbind /sys /mnt/target/sys
+	
 	chroot /mnt/target /usr/bin/emerge --oneshot wget
 	chroot /mnt/target /usr/bin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
     	echo "Generic kernel installed!" |
