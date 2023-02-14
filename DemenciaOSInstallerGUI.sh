@@ -123,8 +123,8 @@ CreateUser() {
 # Instalación de nucleo / kernel para el destino (Instalar kernel para usar el sistema)
 InstallKernel() {
 	##cp -rv /boot/* /mnt/boot
-	chroot /mnt/target /bin/emerge --oneshot wget
-	chroot /mnt/target /bin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
+	chroot /mnt/target /usr/sbin/emerge --oneshot wget
+	chroot /mnt/target /usr/sbin/emerge --oneshot gentoo-kernel-bin gentoo-sources linux-firmware linux-headers
     	echo "Generic kernel installed!" |
 				zenity --progress \
 				--pulsate \
@@ -172,9 +172,9 @@ InstallProcess() {
     echo "Generating fstab file!"
     genfstab -U /mnt/target > /mnt/etc/fstab
     chroot /mnt/target /usr/bin/emerge --oneshot sys-kernel/dracut
-    chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
-    chroot /mnt/target /sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
-    chroot /mnt/target /sbin/grub-mkconfig -o /boot/grub/grub.cfg
+    chroot /mnt/target /usr/sbin/grub-install --target=x86_64-efi --efi-directory=/boot --removable
+    chroot /mnt/target /usr/sbin/grub-install --target=x86_64-efi --efi-directory=/boot --root-directory=/ --bootloader-id=DemenciaOS
+    chroot /mnt/target /usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg
     chroot /mnt/target /usr/sbin/dracut
     CreateUser
     ChangeTimeZone
