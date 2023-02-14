@@ -46,6 +46,8 @@ if [[ $EUID = 0 ]]; then
 	cd arch-install-scripts-master/
 	chroot /mnt/gentoo /usr/bin/make
 	chroot /mnt/gentoo /usr/bin/make install
+	cp -v /mnt/gentoo/arch-install-scripts-master/arch-chroot /mnt/gentoo/sbin/
+	cp -v /mnt/gentoo/arch-install-scripts-master/genfstab /mnt/gentoo/sbin/
 	echo "# Configuraciones del compilador a aplicar en cualquier lenguaje\n
 	COMMON_CFLAGS="-march=native -O2 -pipe"\n
 	# Use los mismos valores en ambas variables\n
