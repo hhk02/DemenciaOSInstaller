@@ -44,8 +44,8 @@ if [[ $EUID = 0 ]]; then
 	wget https://github.com/archlinux/arch-install-scripts/archive/master.zip
 	unzip master.zip
 	cd arch-install-scripts-master/
-	chroot /mnt/gentoo /usr/bin/make
-	chroot /mnt/gentoo /usr/bin/make install
+	chroot /mnt/gentoo /bin/bash -c 'cd /mnt/gentoo/arch-install-scripts-master/ && make'
+	chroot /mnt/gentoo /bin/bash -c 'make install'
 	cp -v /mnt/gentoo/arch-install-scripts-master/arch-chroot /mnt/gentoo/sbin/
 	cp -v /mnt/gentoo/arch-install-scripts-master/genfstab /mnt/gentoo/sbin/
 	echo "# Configuraciones del compilador a aplicar en cualquier lenguaje\n
