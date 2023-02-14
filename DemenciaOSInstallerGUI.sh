@@ -136,7 +136,7 @@ InstallKernel() {
 }
 InstallProcess() {
 	(
-	bash -c 'unsquashfs -f -d /mnt/target/ /mnt/cdrom/image.squashfs' 
+	sudo unsquashfs -f -d /mnt/target/ /mnt/cdrom/image.squashfs
 	) |
 	zenity --progress \
 		--pulsate \
