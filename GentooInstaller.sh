@@ -82,11 +82,12 @@ if [[ $EUID = 0 ]]; then
 	
 	nano -w /mnt/gentoo/etc/locale.gen
 	chroot /mnt/gentoo /bin/bash -c 'locale-gen'
-	chroot /mnt/gentoo /bin/bash -c 'env-update && source /etc/profile'
-	chroot /mnt/gentoo /bin/bash -c 'export PS1="(chroot) ${PS1}"'
 	echo "Installing kernel...."
 	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/gentoo-kernel-bin'
 	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/linux-headers'
+	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-fs/genfstab'
+	chroot /mnt/gentoo /bin/bash -c 'emerge --ask --autounmask=y --autounmask-write sys-kernel/linux-firmware'
+	chroot /mnt/gentoo /usr/sbin/dispatch-conf
 	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/linux-firmware'
 	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/genkernel'
 	genfstab /mnt/gentoo > /mnt/gentoo/etc/fstab
