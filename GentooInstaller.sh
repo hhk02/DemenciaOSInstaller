@@ -44,8 +44,8 @@ if [[ $EUID = 0 ]]; then
 	wget https://github.com/archlinux/arch-install-scripts/archive/master.zip
 	unzip master.zip
 	cd arch-install-scripts-master/
-	make
-	make install
+	chroot /mnt/gentoo /usr/bin/make
+	chroot /mnt/gentoo /usr/bin/make install
 	echo "# Configuraciones del compilador a aplicar en cualquier lenguaje\n
 	COMMON_CFLAGS="-march=native -O2 -pipe"\n
 	# Use los mismos valores en ambas variables\n
