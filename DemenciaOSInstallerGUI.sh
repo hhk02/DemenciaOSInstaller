@@ -246,7 +246,7 @@ Install() {
 				sleep 1
 				mkfs.ext4 $rootpart 
 				sleep 1
-				mount $rootpart /mnt 
+				mount $rootpart /mnt/target 
 				sleep 1
 				if [ ! -d /mnt/target/boot ]; then
 					mkdir /mnt/target/boot 
