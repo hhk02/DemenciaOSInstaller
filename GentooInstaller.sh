@@ -81,7 +81,7 @@ if [[ $EUID = 0 ]]; then
 	echo "Changing into target.."
 	chroot /mnt/gentoo /bin/bash -c 'source /etc/profile'
 	chroot /mnt/gentoo /bin/bash -c 'export PS1="/mnt/gentoo ${PS1}"'
-	chroot /mnt/gentoo /bin/bash -c "'mount $efi_partition /boot'"
+	chroot /mnt/gentoo /bin/bash -c "mount $efi_partition /boot"
 	chroot /mnt/gentoo /bin/bash -c 'emerge-webrsync'
 	echo "Syncing repos!"
 	chroot /mnt/gentoo /bin/bash -c 'emerge --sync'
