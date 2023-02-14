@@ -48,13 +48,19 @@ if [[ $EUID = 0 ]]; then
 	CXXFLAGS="${CFLAGS}""
 	echo "MAKEOPTS="-j2""
 	nano -w /mnt/gentoo/etc/portage/make.conf
-	echo "Select mirror list"
-	arch-chroot /mnt/gentoo /bin/bash -c 'mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf'
 	mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 	echo "Copying default repository configuration!"
 	cp -v /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 	cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 	echo "Changing into target.."
+	mount --types proc /proc /mnt/gentoo/proc
+	mount --rbind /sys /mnt/gentoo/sys
+	mount --make-rslave /mnt/gentoo/sys
+	mount --rbind /dev /mnt/gentoo/dev
+	mount --make-rslave /mnt/gentoo/dev
+	mount --bind /run /mnt/gentoo/run
+	mount --make-slave /mnt/gentoo/run
+	
 	mount $efi_partition /mnt/gentoo/boot
 	arch-chroot /mnt/gentoo /bin/bash -c 'emerge-webrsync'
 	echo "Syncing repos!"
