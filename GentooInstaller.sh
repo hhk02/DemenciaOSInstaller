@@ -51,7 +51,6 @@ if [[ $EUID = 0 ]]; then
 	mkdir --parents /mnt/gentoo
 	echo "Mounting root partition!"
 	mount $root_partition /mnt/gentoo
-	chmod 1777 /mnt/gentoo/tmp
 	cd /mnt/gentoo
 	echo "Installing Gentoo with SystemD PD: He ahi la importancia de SystemD :-)"
 	wget https://gentoo.osuosl.org/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd/stage3-amd64-desktop-systemd-20230129T164658Z.tar.xz
@@ -78,8 +77,8 @@ if [[ $EUID = 0 ]]; then
 	mount --bind /run /mnt/gentoo/run 
 	mount --make-slave /mnt/gentoo/run
 	echo "Changing into target.."
-	source /etc/profile
-	export PS1="(chroot) ${PS1}"
+	source /mnt/gentoo/etc/profile
+	export PS1="(/mnt/gentoo) ${PS1}"
 	mount $efi_partition /boot
 	emerge-webrsync
 	echo "Syncing repos!"
