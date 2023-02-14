@@ -136,14 +136,14 @@ InstallKernel() {
 }
 InstallProcess() {
 	(
-	unsquashfs -comp gzip -f -d /mnt/target/ /mnt/cdrom/image.squashfs 
+	bash -c 'unsquashfs -f -d /mnt/target/ /mnt/cdrom/image.squashfs' 
 	) |
-		zenity --progress \
+	zenity --progress \
 		--pulsate \
 		--no-cancel \
 		--auto-close \
 		--title="Installing Demencia OS" \
-  		--text="Installing...."
+  		--text="Installing...." \
   		--percentage=0
 
     emerge --oneshot arch-install-scripts
