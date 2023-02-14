@@ -23,7 +23,6 @@ if [[ $EUID = 0 ]]; then
 	else
 		net-setup $network_device
 		dhcpcd $network_device
-		ping -t 3 www.google.com
 	fi
 	
 	echo "Write your disk device ex: /dev/sda"
@@ -79,60 +78,60 @@ if [[ $EUID = 0 ]]; then
 	mount --bind /run /mnt/gentoo/run 
 	mount --make-slave /mnt/gentoo/run
 	echo "Changing into target.."
-	chroot /mnt/gentoo /bin/bash -c 'source /etc/profile'
-	chroot /mnt/gentoo /bin/bash -c 'export PS1="/mnt/gentoo ${PS1}"'
-	chroot /mnt/gentoo /bin/bash -c "mount $efi_partition /boot"
-	chroot /mnt/gentoo /bin/bash -c 'emerge-webrsync'
+	source /etc/profile
+	export PS1="(chroot) ${PS1}"
+	mount $efi_partition /boot
+	emerge-webrsync
 	echo "Syncing repos!"
-	chroot /mnt/gentoo /bin/bash -c 'emerge --sync'
-	chroot /mnt/gentoo /bin/bash -c 'emerge --sync --quiet'
+	emerge --sync
+	emerge --sync --quiet
 	eselect profile list
 	echo "Write you do want: ex: 2"
 	read selection
 	eselect profile set $selection
 	echo "Write the timezone ex : Europe/Madrid"
 	read timezone
-	chroot /mnt/gentoo /bin/bash -c "'ln -sf ../usr/share/zoneinfo/$timezone /etc/localtime'"
+	ln -sf ../usr/share/zoneinfo/$timezone /etc/localtime
 	echo "Done!"
 	echo "es_ES.UTF-8 UTF-8"
 	echo "es_MX.UTF-8 UTF-8"
 	echo "Write in the locale.gen!"
 	
-	nano -w /mnt/gentoo/etc/locale.gen
-	chroot /mnt/gentoo /bin/bash -c 'locale-gen'
-	chroot /mnt/gentoo /bin/bash -c 'env-update && source /etc/profile'
-	chroot /mnt/gentoo /bin/bash -c 'export PS1="(chroot) ${PS1}'
+	nano -w /etc/locale.gen
+	locale-gen
+	env-update && source /etc/profile
+	export PS1="(chroot) ${PS1}"
 	echo "Installing kernel...."
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/gentoo-kernel-bin'
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/linux-headers'
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/linux-firmware'
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-kernel/genkernel'
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot genfstab'
+	emerge --oneshot sys-kernel/gentoo-kernel-bin
+	emerge --oneshot sys-kernel/linux-headers
+	emerge --oneshot sys-kernel/linux-firmware
+	emerge --oneshot sys-kernel/genkernel
+	emerge --oneshot genfstab
 	genfstab /mnt/gentoo > /mnt/gentoo/etc/fstab
-	chroot /mnt/gentoo /bin/bash -c 'genkernel all'
-	chroot /mnt/gentoo /bin/bash -c 'ls /boot/vmlinu* /boot/initramfs*'
+	genkernel all
+	ls /boot/vmlinu* /boot/initramfs*
 	echo "Cleaning..."
-	chroot /mnt/gentoo /bin/bash -c 'emerge --depclean'
+	emerge --depclean
 	echo "Set the hostname:" 
 	read hostname
-	chroot /mnt/gentoo /bin/bash -c "'hostnamectl hostname $hostname'"
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot net-misc/dhcpcd'
-	chroot /mnt/gentoo /bin/bash -c 'systemctl enable --now dhcpcd'
+	hostnamectl hostname $hostname
+	emerge --oneshot net-misc/dhcpcd
+	systemctl enable --now dhcpcd
 	echo "Creating hosts"
-	chroot /mnt/gentoo /bin/bash -c 'nano -w /etc/hosts'
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot sys-apps/pcmciautils'
-	chroot /mnt/gentoo /bin/bash -c 'passwd'
-	chroot /mnt/gentoo /bin/bash -c 'systemd-firstboot --prompt --setup-machine-id'
-	chroot /mnt/gentoo /bin/bash -c 'systemctl preset-all'
+	nano -w /etc/hosts
+	emerge --oneshot sys-apps/pcmciautils
+	passwd
+	systemd-firstboot --prompt --setup-machine-id
+	systemctl preset-all
 	echo "Installing Wireless support"
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot net-wireless/iw net-wireless/wpa_supplicant'
+	emerge --oneshot net-wireless/iw net-wireless/wpa_supplicant
 	echo "Installing GRUB"
 	echo 'GRUB_PLATFORMS="efi-64"' >> /mnt/gentoo/etc/portage/make.conf
-	chroot /mnt/gentoo /bin/bash -c 'emerge --oneshot --verbose sys-boot/grub'
-	chroot /mnt/gentoo /bin/bash -c 'emerge --update --newuse --verbose sys-boot/grub'
+	emerge --oneshot --verbose sys-boot/grub
+	emerge --update --newuse --verbose sys-boot/grub
 	echo "Installing bootloader!"
-	chroot /mnt/gentoo /bin/bash -c 'grub-install --target=x86_64-efi --efi-directory=/boot'
-	chroot /mnt/gentoo /bin/bash -c 'grub-mkconfig -o /boot/grub/grub.cfg'
+	grub-install --target=x86_64-efi --efi-directory=/boot
+	grub-mkconfig -o /boot/grub/grub.cfg
 	systemctl reboot	
 else
 	echo "You must run this as root!"
